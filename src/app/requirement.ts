@@ -19,5 +19,17 @@ export class Requirement {
 }
 
 export class RequirementData {
-    public description: string;
+
+    public _id: string;
+    public _rev: string;
+    public type: string;
+
+    public projectId: string;
+    public story: string;
+
+
+    constructor(projectId: string = null) {
+        this.type = 'REQDATA';
+        this.projectId = projectId;
+    }
 }

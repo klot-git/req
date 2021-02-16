@@ -25,6 +25,8 @@ export class ReqDetailPage implements OnInit {
     this.req._id = this.route.snapshot.paramMap.get('id');
 
     this.form = new FormGroup({
+      name: new FormControl(''),
+      reqCode: new FormControl(''),
       description: new FormControl('')
     });
   }
@@ -33,8 +35,24 @@ export class ReqDetailPage implements OnInit {
     this.load();
   }
 
+  private bindToScreen() {
+    this.form.get('name').setValue(this.req.name);
+    this.form.get('reqCode').setValue(this.req.reqCode);
+  }
+
+  private bindToObject() {
+    this.req.name = this.form.get('name').value;
+    this.req.reqCode = this.form.get('reqCode').value;
+  }
+
   async load() {
     this.req = await this.reqService.loadRequirement(this.req._id);
+    this.bindToScreen();
+  }
+
+  ionViewWillLeave() {
+    this.bindToObject();
+    this.reqService.updateRequirement(this.req);
   }
 
 }

@@ -29,3 +29,22 @@
 @import '~quill/dist/quill.core.css';
 @import '~quill/dist/quill.bubble.css';
 @import '~quill/dist/quill.snow.css';
+
+quill-editor {
+    width: 100%;
+    border: none;
+}
+
+quill-editor .ql-toolbar {
+    border: none!important;
+    padding-left: 0px!important;
+    margin-left: -8px!important;
+}
+
+quill-editor .ql-container {
+    border: none!important;
+}
+
+quill-editor .ql-editor {
+    padding-left: 0px;
+}

@@ -8,6 +8,7 @@ import { PrjSummaryPageRoutingModule } from './prj-summary-routing.module';
 
 import { PrjSummaryPage } from './prj-summary.page';
 import { QuillModule } from 'ngx-quill';
+import { quillModules } from '../app.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,7 @@ import { QuillModule } from 'ngx-quill';
     FormsModule, ReactiveFormsModule,
     IonicModule,
     PrjSummaryPageRoutingModule,
-    QuillModule.forRoot()
+    QuillModule.forRoot({modules: quillModules, placeholder: ''})
   ],
   declarations: [PrjSummaryPage]
 })

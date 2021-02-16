@@ -44,8 +44,9 @@ export class ReqListPage implements OnInit {
     if (this.requirements.length === 0) {
       req.order = 0;
     } else {
-      req.order = this.requirements[this.requirements.length - 1].order + 1;
+      req.order = this.requirements.length;
     }
+    req.reqCode = (req.order + 1).toString();
 
     this.requirements.push(req);
     this.form.get('newRequirement').setValue('');

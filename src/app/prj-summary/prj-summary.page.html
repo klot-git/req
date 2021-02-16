@@ -8,9 +8,22 @@
 </ion-header>
 
 <ion-content>  
-  <form [formGroup]="form">    
-    <ion-input placeholder="Name" formControlName="name"></ion-input>
-    <ion-input placeholder="Client" formControlName="client"></ion-input>
-    <quill-editor formControlName="description" [maxLength]="10" [required]="true"></quill-editor>    
-  </form>
+  <div class="boxed-width ion-padding">
+    <form [formGroup]="form">    
+      <ion-item>
+        <ion-label position="floating">Project name</ion-label>
+        <ion-input placeholder="Name" formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Client</ion-label>
+        <ion-input placeholder="Client" formControlName="client"></ion-input>
+      </ion-item>
+      <ion-item lines="full">
+        <quill-editor formControlName="description" [maxLength]="10" [required]="true"></quill-editor>    
+      </ion-item>
+      
+      
+    </form>
+  </div>
+  
 </ion-content>

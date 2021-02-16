@@ -21,8 +21,7 @@ export class ReqDetailPage implements OnInit {
     private reqService: ReqService,
     private route: ActivatedRoute) {
 
-    this.req = new Requirement();
-    this.req._id = this.route.snapshot.paramMap.get('id');
+    this.req = { reqId: parseInt(this.route.snapshot.paramMap.get('id'), 10) } as Requirement;
 
     this.form = new FormGroup({
       name: new FormControl(''),
@@ -46,7 +45,7 @@ export class ReqDetailPage implements OnInit {
   }
 
   async load() {
-    this.req = await this.reqService.loadRequirement(this.req._id);
+    this.req = await this.reqService.loadRequirement(this.req.reqId);
     this.bindToScreen();
   }
 

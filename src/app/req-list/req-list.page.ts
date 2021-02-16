@@ -59,26 +59,24 @@ export class ReqListPage implements OnInit {
 
   async doReorder(ev: CustomEvent<ItemReorderEventDetail>) {
 
-    console.log('form:' + ev.detail.from + ' to:' + ev.detail.to);
+    const reqId = this.requirements[ev.detail.from].reqId;
+
+    // console.log('id do req:' + reqId);
+    // console.log('form:' + ev.detail.from + ' to:' + ev.detail.to);
 
     // update items with new order
     this.requirements = ev.detail.complete(this.requirements);
 
     const startIdx = ev.detail.from <= ev.detail.to ? ev.detail.from : ev.detail.to;
     const endIdx = ev.detail.from > ev.detail.to ? ev.detail.from : ev.detail.to;
-
-    console.log('start:' + startIdx + ' end:' + endIdx);
-
-    const reqsToUpdate  = [];
     for (let i = startIdx; i <= endIdx; i++) {
       this.requirements[i].order = i;
-      reqsToUpdate.push(this.requirements[i]);
     }
 
-    console.log(this.requirements);
+    // console.log(this.requirements);
 
     try {
-      await this.reqService.updateRequirementsOrder(reqsToUpdate);
+      await this.reqService.updateRequirementsOrder(reqId, ev.detail.from, ev.detail.to);
     } catch (err) {
       console.log(err);
     }

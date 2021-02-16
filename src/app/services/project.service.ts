@@ -1,41 +1,46 @@
 import { Injectable } from '@angular/core';
 import { Project } from '../project';
-import { DbService } from './db.service';
+import { ConnectionService } from './db.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
 
-  constructor(private db: DbService) {
+  constructor(private conn: ConnectionService) {
   }
 
   async loadCurrentProject() {
+    let prj = { projectId: 1, name: 'Your first project '} as Project;
+
     if (this.projectId) {
-      return await this.loadProject(this.projectId);
+      prj = await this.loadProject(this.projectId);
     }
-    const prj = new Project('1', 'Your first project');
-    this.projectId = prj._id;
+
+    this.projectId = prj.projectId;
     return prj;
   }
 
-  private get projectId() {
-    return localStorage.getItem('__prjId');
+  private get projectId(): number | null {
+    const t = localStorage.getItem('__prjId');
+    if (!t) {
+      return null;
+    }
+    return parseInt(t, 10);
   }
-  private set projectId(value: string) {
-    localStorage.setItem('__prjId', value);
+  private set projectId(value: number) {
+    localStorage.setItem('__prjId', value.toString());
   }
-  public get currentProjectId() {
+  public get currentProjectId(): number {
     return this.projectId;
   }
 
   async updateProject(prj: Project) {
-    await this.db.connection.put(prj);
+    await this.conn.db.projects.put(prj);
   }
 
-  async loadProject(prjId: string) {
-    const prj = await this.db.connection.get(prjId);
-    this.projectId = prj._id;
+  async loadProject(prjId: number) {
+    const prj = await this.conn.db.projects.get(prjId);
     return prj;
   }
 

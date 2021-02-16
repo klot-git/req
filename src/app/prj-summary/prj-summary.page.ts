@@ -16,7 +16,7 @@ export class PrjSummaryPage implements OnInit {
 
   constructor(private projectService: ProjectService) {
 
-    this.project = new Project('', '');
+    this.project = new Project();
 
     this.projectService.loadCurrentProject().then(p => {
       this.project = p;

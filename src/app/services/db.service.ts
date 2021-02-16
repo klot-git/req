@@ -1,22 +1,37 @@
 import { Injectable } from '@angular/core';
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+import Dexie from 'dexie';
+import { Project } from '../project';
+import { Requirement } from '../requirement';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class DbService {
+export class ConnectionService {
 
-  public connection;
+  public db: DB;
 
   constructor() { }
 
   async initDB() {
-    PouchDB.plugin(PouchDBFind);
-    this.connection = new PouchDB('requirements.db');
+    // Instantiate it
+    this.db = new DB('req');
   }
 
+}
 
+class DB extends Dexie {
 
+  projects: Dexie.Table<Project, number>;
+  requirements: Dexie.Table<Requirement, number>;
+
+  constructor(databaseName) {
+      super(databaseName);
+      this.version(1).stores({
+          projects: '++projectId',
+          requirements: '++reqId, order',
+      });
+      this.projects = this.table('projects');
+      this.requirements = this.table('requirements');
+  }
 }

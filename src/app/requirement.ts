@@ -1,35 +1,21 @@
 export class Requirement {
 
-    public _id: string;
-    public _rev: string;
-    public type: string;
-
-    public projectId: string;
+    public reqId: number;
     public name: string;
     public reqCode: string;
-    public data: RequirementData;
     public order: number;
 
-    constructor(name: string = null, projectId: string = null) {
-        this.type = 'REQ';
-        this.name = name;
-        this.projectId = projectId;
-        this.data = new RequirementData();
-    }
+    public projectId: number;
+
 }
 
 export class RequirementData {
 
-    public _id: string;
-    public _rev: string;
-    public type: string;
-
-    public projectId: string;
+    public projectId: number;
     public story: string;
 
 
-    constructor(projectId: string = null) {
-        this.type = 'REQDATA';
+    constructor(projectId: number = null) {
         this.projectId = projectId;
     }
 }

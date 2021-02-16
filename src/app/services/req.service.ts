@@ -32,8 +32,26 @@ export class ReqService {
     return await this.conn.db.requirements.put(req);
   }
 
-  async updateRequirementsOrder(reqs: Requirement[]) {
-    // return await this.db.connection.bulkDocs(reqs);
+
+  async updateRequirementsOrder(reqId: number, from: number, to: number) {
+
+    const projectId = this.projectService.currentProjectId;
+
+    // updates reqs in between
+    if (from < to) {  // if item was moved down
+      await this.conn.db.requirements
+        .filter(r => r.projectId === projectId && r.order > from && r.order <= to)
+        .modify(r => { r.order = r.order - 1; });
+    } else {  // if item was moved up
+      await this.conn.db.requirements
+        .filter(r => r.projectId === projectId && r.order >= to && r.order < from)
+        .modify(r => { r.order = r.order + 1; });
+    }
+
+    // update moved req
+    const req = await this.conn.db.requirements.get(reqId);
+    req.order = to;
+    await this.conn.db.requirements.put(req);
   }
 
 }

@@ -11,7 +11,7 @@
 
   <ion-reorder-group  (ionItemReorder)="doReorder($event)" disabled="false">
     <ion-list *ngFor="let req of requirements">
-      <ion-item [routerLink]="'/requirements/' + req._id">      
+      <ion-item [routerLink]="'/requirements/' + req.reqId">      
         <ion-label>{{req.name}}</ion-label>
         <ion-reorder slot="end"></ion-reorder>
       </ion-item>

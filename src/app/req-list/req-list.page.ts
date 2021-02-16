@@ -33,13 +33,17 @@ export class ReqListPage implements OnInit {
 
   async loadRequirements() {
     this.requirements = await this.reqService.loadRequirements();
+    console.log(this.requirements);
   }
 
   addRequirement() {
     if (!this.form.get('newRequirement').value) {
       return;
     }
-    const req = new Requirement(this.form.get('newRequirement').value, this.projectService.currentProjectId);
+
+    const req = new Requirement();
+    req.name = this.form.get('newRequirement').value;
+    req.projectId = this.projectService.currentProjectId;
 
     if (this.requirements.length === 0) {
       req.order = 0;
@@ -55,19 +59,26 @@ export class ReqListPage implements OnInit {
 
   async doReorder(ev: CustomEvent<ItemReorderEventDetail>) {
 
+    console.log('form:' + ev.detail.from + ' to:' + ev.detail.to);
+
     // update items with new order
     this.requirements = ev.detail.complete(this.requirements);
 
     const startIdx = ev.detail.from <= ev.detail.to ? ev.detail.from : ev.detail.to;
-    const reqsToUpdate  = [];
+    const endIdx = ev.detail.from > ev.detail.to ? ev.detail.from : ev.detail.to;
 
-    for (let i = startIdx; i < this.requirements.length; i++) {
+    console.log('start:' + startIdx + ' end:' + endIdx);
+
+    const reqsToUpdate  = [];
+    for (let i = startIdx; i <= endIdx; i++) {
       this.requirements[i].order = i;
       reqsToUpdate.push(this.requirements[i]);
     }
 
+    console.log(this.requirements);
+
     try {
-      await this.reqService.updateRequirements(reqsToUpdate);
+      await this.reqService.updateRequirementsOrder(reqsToUpdate);
     } catch (err) {
       console.log(err);
     }

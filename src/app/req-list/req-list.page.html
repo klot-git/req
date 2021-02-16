@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Requirements</ion-title>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-reorder-group  (ionItemReorder)="doReorder($event)" disabled="false">
+    <ion-list *ngFor="let req of requirements">
+      <ion-item [routerLink]="'/requirements/' + req._id">      
+        <ion-label>{{req.name}}</ion-label>
+        <ion-reorder slot="end"></ion-reorder>
+      </ion-item>
+    </ion-list>
+  </ion-reorder-group>
+
+
+  <ion-item lines="none">
+    <form [formGroup]="form" slot="start" class="input-form">
+      <ion-input placeholder="New requirement" formControlName="newRequirement"></ion-input>      
+    </form>                  
+    <ion-button color="primary" (click)="addRequirement()">Add</ion-button>
+  </ion-item>
+
+  
+    
+      
+
+</ion-content>

@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Summary</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>  
+  <form [formGroup]="form">    
+    <ion-input placeholder="Name" formControlName="name"></ion-input>
+    <ion-input placeholder="Client" formControlName="client"></ion-input>
+    <quill-editor formControlName="description" [maxLength]="10" [required]="true"></quill-editor>    
+  </form>
+</ion-content>

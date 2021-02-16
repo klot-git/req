@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <style>
+             <!--
+                @page { 
+                    size:8.5in 11in;
+                    margin: 2cm;
+                    orphans:4;
+                    widows:2;
+                }
+            -->
+            @media print {
+                h2 { 
+                    page-break-before: always;
+                }
+                h3, h4 {
+                    page-break-after: avoid;
+                }
+                pre, blockquote {
+                    page-break-inside: avoid;
+                }
+}
+        </style>
+    </head>
+    <body>
+        <h1>{{project.name}}</h1>
+        <h1>{{project.client}}</h1>
+
+        <h2>Vision</h2>
+        {{project.description}}
+
+        <h2>Requirements</h2>        
+        <ul>
+            {{requirements}}
+            <li>{{name}}</li>
+            {{/requirements}}
+        </ul>
+        <h3>sub</h3>
+        <p>dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+        </p>
+        <h3>sub</h3>
+        <p>dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+            dsadsads sadsa dlksajld slajdlsalk jldas<br/>
+        </p>
+    <body>
+</html>

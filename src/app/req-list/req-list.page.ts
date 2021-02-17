@@ -35,7 +35,7 @@ export class ReqListPage implements OnInit {
 
   async loadRequirements() {
     this.requirements = await this.reqService.loadRequirements();
-    console.log(this.requirements);
+    // console.log(this.requirements);
   }
 
   addRequirement() {
@@ -52,7 +52,7 @@ export class ReqListPage implements OnInit {
     } else {
       req.order = this.requirements.length;
     }
-    req.reqCode = (req.order + 1).toString();
+    req.reqCode = 'USR-' + (req.order + 1);
 
     this.requirements.push(req);
     this.form.get('newRequirement').setValue('');

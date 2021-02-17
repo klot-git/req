@@ -10,6 +10,7 @@ import FileSaver from 'file-saver';
 import Mark from 'markup-js';
 
 import { ProjectService } from './project.service';
+import { MessageService } from './message.service';
 
 
 @Injectable({
@@ -19,6 +20,7 @@ export class TemplateService {
 
   constructor(
     private http: HttpClient,
+    private messageService: MessageService,
     private projectService: ProjectService,
     private reqService: ReqService) {
   }
@@ -40,8 +42,10 @@ export class TemplateService {
 
   private async renderHtml(): Promise<Blob> {
 
+    this.messageService.blockUI();
+
     const project = await this.projectService.loadCurrentProject();
-    const reqs = await this.reqService.loadRequirements();
+    const reqs = await this.reqService.loadRequirements(true);
 
     const context = {
       project,
@@ -51,6 +55,8 @@ export class TemplateService {
     const template = await this.http.get('assets/templates/default.html', {responseType: 'text'}).toPromise();
 
     const output = Mark.up(template, context);
+
+    this.messageService.isLoadingData = false;
 
     return new Blob([output], {type: 'text/html;charset=utf-8'});
   }

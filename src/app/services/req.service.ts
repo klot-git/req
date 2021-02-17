@@ -20,9 +20,12 @@ export class ReqService {
     req.reqId = await this.conn.db.requirements.put(req);
   }
 
-  async loadRequirements(): Promise<Requirement[]> {
-    const collection = await this.conn.db.requirements.orderBy('order').filter(r => r.projectId === this.projectService.currentProjectId);
-    return this.conn.map(collection, doc => ({
+  async loadRequirements(includeData = false): Promise<Requirement[]> {
+    const query = await this.conn.db.requirements.orderBy('order').filter(r => r.projectId === this.projectService.currentProjectId);
+    if (includeData) {
+      return query.toArray();
+    }
+    return this.conn.map(query, doc => ({
       reqId: doc.reqId,
       reqCode: doc.reqCode,
       name: doc.name,

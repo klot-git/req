@@ -20,6 +20,7 @@ export class ProjectService {
 
     if (!prj) {
       prj = { projectId: uuidv4(), name: 'Your first project '} as Project;
+      this.updateProject(prj);
     }
 
     this.projectId = prj.projectId;

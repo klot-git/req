@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import { ItemReorderEventDetail } from '@ionic/core';
 
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
@@ -20,6 +20,8 @@ export class ReqListPage implements OnInit {
   form: FormGroup;
 
   requirements: Requirement[] = [];
+
+  movingEpics = false;
 
   constructor(
     private messageService: MessageService,
@@ -61,36 +63,43 @@ export class ReqListPage implements OnInit {
     this.reqService.createRequirement(req);
   }
 
-  async doReorder(ev: CustomEvent<ItemReorderEventDetail>) {
+  async onDrop(event: CdkDragDrop<string[]>) {
 
-    const req = this.requirements[ev.detail.from];
+    this.movingEpics = false;
 
-    // console.log('id do req:' + reqId);
-    // console.log('form:' + ev.detail.from + ' to:' + ev.detail.to);
+    const req = this.requirements[event.previousIndex];
 
-    // update items with new order
-    this.requirements = ev.detail.complete(this.requirements);
+    console.log('id do req:' + req.reqId);
+    console.log('form:' + event.previousIndex + ' to:' + event.currentIndex);
 
-    const startIdx = ev.detail.from <= ev.detail.to ? ev.detail.from : ev.detail.to;
-    const endIdx = ev.detail.from > ev.detail.to ? ev.detail.from : ev.detail.to;
+    // reorder items at the array
+    moveItemInArray(this.requirements, event.previousIndex, event.currentIndex);
+
+    // updat order field
+    const startIdx = event.previousIndex <= event.currentIndex ? event.previousIndex : event.currentIndex;
+    const endIdx = event.previousIndex > event.currentIndex ? event.previousIndex : event.currentIndex;
     for (let i = startIdx; i <= endIdx; i++) {
       this.requirements[i].order = i;
     }
 
-    req.parentId = this.findNewParentIdFor(req);
-
-    // console.log(this.requirements);
+    console.log(this.requirements);
 
     try {
-      await this.reqService.updateRequirementsOrder(req.reqId, ev.detail.from, ev.detail.to);
+      await this.reqService.updateRequirementsOrder(req.reqId, event.previousIndex, event.currentIndex);
     } catch (err) {
       this.messageService.addError('Sorry, could not reorder items');
       console.log(err);
     }
   }
 
-  drop() {
-    
+  onDragEnded(event: CdkDragEnd): void {
+    // event.source._dragRef.reset();
+  }
+
+  onDragStart(event: CdkDragStart): void {
+    // console.log(event.source._dragRef);
+    this.movingEpics = true;
+
   }
 
   toStory(req: Requirement) {

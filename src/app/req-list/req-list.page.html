@@ -9,10 +9,13 @@
 
 <ion-content>
 
-    <ion-list class="req-list" cdkDropList (cdkDropListDropped)="drop($event)">
+    <ion-list class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
 
     <!-- <ion-item *ngFor="let req of requirements" [routerLink]="'/requirements/' + req.reqId"> -->    
-    <ion-item class="req-item" *ngFor="let req of requirements" cdkDrag>              
+    <ion-item 
+      class="req-item"        
+      *ngFor="let req of requirements"
+      (cdkDragEnded)="onDragEnded($event)" (cdkDragStarted)="onDragStart($event)" cdkDrag>
       <div class="req-placeholder" *cdkDragPlaceholder></div>
       <ion-label class="req-label" [class.story]="req.parentId != null">
         <div class="req-code">{{req.reqCode}}</div>

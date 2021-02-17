@@ -5,17 +5,12 @@ export class Requirement {
     public reqCode: string;
     public order: number;
 
-    public projectId: number;
+    public projectId: string;
 
 }
 
 export class RequirementData {
 
-    public projectId: number;
     public story: string;
 
-
-    constructor(projectId: number = null) {
-        this.projectId = projectId;
-    }
 }

@@ -33,7 +33,6 @@ export class ReqListPage implements OnInit {
 
   async loadRequirements() {
     this.requirements = await this.reqService.loadRequirements();
-    console.log(this.requirements);
   }
 
   addRequirement() {

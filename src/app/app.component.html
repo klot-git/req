@@ -1,4 +1,8 @@
 <ion-app>
+
+  <!-- Block UI -->
+  <ion-backdrop *ngIf="messageService.isUIBlocked" visible="true"></ion-backdrop>
+
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
@@ -52,4 +56,10 @@
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
+
+  <!-- LOADING SPIN -->
+  <div *ngIf="messageService.isLoadingData" class="spinner">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
 </ion-app>

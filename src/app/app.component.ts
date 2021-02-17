@@ -4,6 +4,8 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ConnectionService } from './services/db.service';
+import { MessageService } from './services/message.service';
+import { ProjectService } from './services/project.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +21,8 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private db: ConnectionService,
+    private projectService: ProjectService,
+    public messageService: MessageService
   ) {
     this.initializeApp();
   }
@@ -37,5 +41,6 @@ export class AppComponent implements OnInit {
 
   private async init() {
     await this.db.initDB();
+    await this.projectService.loadCurrentProject();
   }
 }

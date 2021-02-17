@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {v4 as uuidv4} from 'uuid';
 import { Project } from '../project';
 import { ConnectionService } from './db.service';
 
@@ -11,27 +12,27 @@ export class ProjectService {
   }
 
   async loadCurrentProject() {
-    let prj = { projectId: 1, name: 'Your first project '} as Project;
+    let prj: Project;
 
     if (this.projectId) {
       prj = await this.loadProject(this.projectId);
+    }
+
+    if (!prj) {
+      prj = { projectId: uuidv4(), name: 'Your first project '} as Project;
     }
 
     this.projectId = prj.projectId;
     return prj;
   }
 
-  private get projectId(): number | null {
-    const t = localStorage.getItem('__prjId');
-    if (!t) {
-      return null;
-    }
-    return parseInt(t, 10);
+  private get projectId(): string {
+    return localStorage.getItem('__prjId');
   }
-  private set projectId(value: number) {
-    localStorage.setItem('__prjId', value.toString());
+  private set projectId(value: string) {
+    localStorage.setItem('__prjId', value);
   }
-  public get currentProjectId(): number {
+  public get currentProjectId(): string {
     return this.projectId;
   }
 
@@ -39,8 +40,8 @@ export class ProjectService {
     await this.conn.db.projects.put(prj);
   }
 
-  async loadProject(prjId: number) {
-    const prj = await this.conn.db.projects.get(prjId);
+  async loadProject(projectId: string) {
+    const prj = await this.conn.db.projects.get({ projectId });
     return prj;
   }
 

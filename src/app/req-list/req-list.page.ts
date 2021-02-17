@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ItemReorderEventDetail } from '@ionic/core';
 
 import { Requirement } from '../requirement';
+import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
 
@@ -19,6 +20,7 @@ export class ReqListPage implements OnInit {
   requirements: Requirement[] = [];
 
   constructor(
+    private messageService: MessageService,
     private reqService: ReqService,
     private projectService: ProjectService
   ) {
@@ -33,6 +35,7 @@ export class ReqListPage implements OnInit {
 
   async loadRequirements() {
     this.requirements = await this.reqService.loadRequirements();
+    console.log(this.requirements);
   }
 
   addRequirement() {
@@ -77,6 +80,7 @@ export class ReqListPage implements OnInit {
     try {
       await this.reqService.updateRequirementsOrder(reqId, ev.detail.from, ev.detail.to);
     } catch (err) {
+      this.messageService.addError('Sorry, could not reorder items');
       console.log(err);
     }
   }

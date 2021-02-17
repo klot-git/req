@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Dexie from 'dexie';
+import Dexie, { Collection } from 'dexie';
 import { Project } from '../project';
 import { Requirement } from '../requirement';
 
@@ -18,6 +18,11 @@ export class ConnectionService {
     this.db = new DB('req');
   }
 
+  public map(collection: Collection, mapperFn: any) {
+    const result = [];
+    return collection.each(row => result.push(mapperFn(row))).then(() => result);
+  }
+
 }
 
 class DB extends Dexie {
@@ -29,9 +34,10 @@ class DB extends Dexie {
       super(databaseName);
       this.version(1).stores({
           projects: 'projectId',
-          requirements: '++reqId, order',
+          requirements: '++reqId,projectId,order',
       });
       this.projects = this.table('projects');
       this.requirements = this.table('requirements');
   }
+
 }

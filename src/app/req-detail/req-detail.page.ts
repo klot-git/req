@@ -21,12 +21,12 @@ export class ReqDetailPage implements OnInit {
     private reqService: ReqService,
     private route: ActivatedRoute) {
 
-    this.req = { reqId: parseInt(this.route.snapshot.paramMap.get('id'), 10) } as Requirement;
+    this.req = { reqId: parseInt(this.route.snapshot.paramMap.get('id'), 10), data: new RequirementData() } as Requirement;
 
     this.form = new FormGroup({
       name: new FormControl(''),
       reqCode: new FormControl(''),
-      description: new FormControl('')
+      story: new FormControl('')
     });
   }
 
@@ -37,15 +37,20 @@ export class ReqDetailPage implements OnInit {
   private bindToScreen() {
     this.form.get('name').setValue(this.req.name);
     this.form.get('reqCode').setValue(this.req.reqCode);
+    this.form.get('story').setValue(this.req.data.story);
   }
 
   private bindToObject() {
     this.req.name = this.form.get('name').value;
     this.req.reqCode = this.form.get('reqCode').value;
+    this.req.data.story = this.form.get('story').value;
   }
 
   async load() {
     this.req = await this.reqService.loadRequirement(this.req.reqId);
+    if (!this.req.data) {
+      this.req.data = new RequirementData();
+    }
     this.bindToScreen();
   }
 

@@ -21,7 +21,13 @@ export class ReqService {
   }
 
   async loadRequirements(): Promise<Requirement[]> {
-    return await this.conn.db.requirements.filter(r => r.projectId === this.projectService.currentProjectId).sortBy('order');
+    const collection = await this.conn.db.requirements.orderBy('order').filter(r => r.projectId === this.projectService.currentProjectId);
+    return this.conn.map(collection, doc => ({
+      reqId: doc.reqId,
+      reqCode: doc.reqCode,
+      name: doc.name,
+      order: doc.order
+    }));
   }
 
   async loadRequirement(reqId: number): Promise<Requirement> {

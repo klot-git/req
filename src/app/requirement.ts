@@ -7,6 +7,8 @@ export class Requirement {
 
     public projectId: string;
 
+    public data: RequirementData;
+
 }
 
 export class RequirementData {

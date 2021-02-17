@@ -5,6 +5,8 @@ export class Requirement {
     public reqCode: string;
     public order: number;
 
+    public parentId: number;
+
     public projectId: string;
 
     public data: RequirementData;

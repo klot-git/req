@@ -28,6 +28,7 @@ export class ReqService {
     return this.conn.map(query, doc => ({
       reqId: doc.reqId,
       reqCode: doc.reqCode,
+      parentId: doc.parentId,
       name: doc.name,
       order: doc.order
     }));

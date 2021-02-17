@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { ReqListPageRoutingModule } from './req-list-routing.module';
 
 import { ReqListPage } from './req-list.page';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule, ReactiveFormsModule,
     IonicModule,
-    ReqListPageRoutingModule
+    ReqListPageRoutingModule,
+    DragDropModule
   ],
   declarations: [ReqListPage]
 })

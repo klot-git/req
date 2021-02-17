@@ -3,6 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import { ItemReorderEventDetail } from '@ionic/core';
 
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+
 import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
@@ -61,7 +63,7 @@ export class ReqListPage implements OnInit {
 
   async doReorder(ev: CustomEvent<ItemReorderEventDetail>) {
 
-    const reqId = this.requirements[ev.detail.from].reqId;
+    const req = this.requirements[ev.detail.from];
 
     // console.log('id do req:' + reqId);
     // console.log('form:' + ev.detail.from + ' to:' + ev.detail.to);
@@ -75,14 +77,47 @@ export class ReqListPage implements OnInit {
       this.requirements[i].order = i;
     }
 
+    req.parentId = this.findNewParentIdFor(req);
+
     // console.log(this.requirements);
 
     try {
-      await this.reqService.updateRequirementsOrder(reqId, ev.detail.from, ev.detail.to);
+      await this.reqService.updateRequirementsOrder(req.reqId, ev.detail.from, ev.detail.to);
     } catch (err) {
       this.messageService.addError('Sorry, could not reorder items');
       console.log(err);
     }
+  }
+
+  drop() {
+    
+  }
+
+  toStory(req: Requirement) {
+    const parentId = this.findNewParentIdFor(req);
+    if (!parentId) {
+      return;
+    }
+    req.parentId = parentId;
+  }
+
+  toEpic(req: Requirement) {
+    req.parentId = null;
+  }
+
+  private findNewParentIdFor(req: Requirement): number {
+    const reqIdx = this.requirements.indexOf(req);
+    if (reqIdx <= 0 ) {
+      return null;
+    }
+    const previousReq = this.requirements[reqIdx - 1];
+
+    if (!previousReq.parentId) {
+      return previousReq.reqId;
+    } else {
+      return previousReq.parentId;
+    }
+
   }
 
 

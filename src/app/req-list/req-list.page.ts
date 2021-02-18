@@ -43,11 +43,12 @@ export class ReqListPage implements OnInit {
   }
 
   selectEpic(epic: Requirement) {
-    if (this.selectedEpic === epic) {
-      this.selectedEpic = null;
-    } else {
-      this.selectedEpic = epic;
-    }
+    // if (this.selectedEpic === epic) {
+    //   this.selectedEpic = null;
+    // } else {
+    //   this.selectedEpic = epic;
+    // }
+    this.selectedEpic = epic;
   }
 
   addRequirement() {

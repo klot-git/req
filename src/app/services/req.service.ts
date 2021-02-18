@@ -21,7 +21,9 @@ export class ReqService {
   }
 
   async loadRequirements(includeData = false): Promise<Requirement[]> {
-    const query = await this.conn.db.requirements.orderBy('order').filter(r => r.projectId === this.projectService.currentProjectId);
+    const query = await this.conn.db.requirements
+      .orderBy('[parentId+order]')
+      .filter(r => r.projectId === this.projectService.currentProjectId);
     if (includeData) {
       return query.toArray();
     }
@@ -34,6 +36,23 @@ export class ReqService {
     }));
   }
 
+  groupRequirements(requirements: Requirement[]): Requirement[] {
+    const grouped: Requirement[] = [];
+
+    requirements.forEach(r => {
+      if (!r.parentId) {
+        grouped.push(r);
+      } else {
+        const parent = grouped.find(r2 => r2.reqId === r.parentId);
+        if (!parent.childs) {
+          parent.childs = [];
+        }
+        parent.childs.push(r);
+      }
+    });
+    return grouped;
+  }
+
   async loadRequirement(reqId: number): Promise<Requirement> {
     return await this.conn.db.requirements.get(reqId);
   }
@@ -42,8 +61,12 @@ export class ReqService {
     return await this.conn.db.requirements.put(req);
   }
 
+  async updateRequirementParent(reqId: number, parentId: number, order: number) {
+    return await this.conn.db.requirements.update(reqId, { parentId, order });
+  }
 
-  async updateRequirementsOrder(reqId: number, from: number, to: number) {
+
+  async updateRequirementsOrder(reqId: number, parentId: number, from: number, to: number) {
 
     const projectId = this.projectService.currentProjectId;
 
@@ -62,6 +85,16 @@ export class ReqService {
     const req = await this.conn.db.requirements.get(reqId);
     req.order = to;
     await this.conn.db.requirements.put(req);
+  }
+
+  async shiftRequirementsOrder(parentId: number, orderFrom: number, step: number) {
+
+    const projectId = this.projectService.currentProjectId;
+
+    await this.conn.db.requirements
+      .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)
+      .modify(r => { r.order = r.order + step; });
+
   }
 
 }

@@ -11,6 +11,8 @@ export class Requirement {
 
     public data: RequirementData;
 
+    public childs: Requirement[];
+
 }
 
 export class RequirementData {

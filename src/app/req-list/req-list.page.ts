@@ -21,8 +21,6 @@ export class ReqListPage implements OnInit {
 
   requirements: Requirement[] = [];
 
-  movingEpics = false;
-
   constructor(
     private messageService: MessageService,
     private reqService: ReqService,
@@ -38,8 +36,13 @@ export class ReqListPage implements OnInit {
   }
 
   async loadRequirements() {
-    this.requirements = await this.reqService.loadRequirements();
-    // console.log(this.requirements);
+    const reqs = await this.reqService.loadRequirements();
+
+    console.log(reqs);
+
+    this.requirements = this.reqService.groupRequirements(reqs);
+
+    console.log(this.requirements);
   }
 
   addRequirement() {
@@ -51,70 +54,110 @@ export class ReqListPage implements OnInit {
     req.name = this.form.get('newRequirement').value;
     req.projectId = this.projectService.currentProjectId;
 
-    if (this.requirements.length === 0) {
-      req.order = 0;
-    } else {
-      req.order = this.requirements.length;
-    }
-    req.reqCode = 'USR-' + (req.order + 1);
+    req.order = this.requirements.length;
+    req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
+
+    req.parentId = 0;
 
     this.requirements.push(req);
     this.form.get('newRequirement').setValue('');
     this.reqService.createRequirement(req);
   }
 
-  async onDrop(event: CdkDragDrop<string[]>) {
+  toStory(req: Requirement) {
 
-    this.movingEpics = false;
+    // find the new parent
+    const parent = this.findNewParentFor(req);
+    if (!parent) {
+      return;
+    }
+    if (!parent.childs) {
+      parent.childs = [];
+    }
 
-    const req = this.requirements[event.previousIndex];
+    // remove it from the epics collection
+    const idx = this.requirements.findIndex(r => r.reqId === req.reqId);
+    this.requirements.splice(idx, 1);
+
+    // update other epics order
+    this.requirements.filter(r => r.order >= req.order).forEach(r => { r.order--; });
+
+    // add it to the parent childs
+    const oldOrder = req.order;
+    req.order = parent.childs.length;
+    req.parentId = parent.reqId;
+    parent.childs.push(req);
+
+    // update req parent at db
+    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
+
+    // update epics order at db
+    this.reqService.shiftRequirementsOrder(0, oldOrder, -1);
+
+    console.log(this.requirements);
+
+  }
+
+  toEpic(req: Requirement) {
+
+    // finds the parent
+    const parent = this.requirements.find(r => r.reqId === req.parentId);
+    if (!parent) {
+      return;
+    }
+
+    // remove it from the parent childs
+    const idx = parent.childs.findIndex(r => r.reqId === req.reqId);
+    parent.childs.splice(idx, 1);
+
+    // update other childs order
+    parent.childs.filter(r => r.order >= req.order).forEach(r => { r.order--; });
+
+    // adds it to the epic collection
+    req.parentId = 0;
+    const oldOrder = req.order;
+    req.order = this.requirements.length;
+    this.requirements.push(req);
+
+    // update req parent at db
+    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
+
+    // update childs order at db
+    this.reqService.shiftRequirementsOrder(parent.parentId, oldOrder, -1);
+
+    console.log(this.requirements);
+
+  }
+
+  async onDrop(event: CdkDragDrop<string[]>, reqs: Requirement[]) {
+
+    const req = reqs[event.previousIndex];
 
     console.log('id do req:' + req.reqId);
     console.log('form:' + event.previousIndex + ' to:' + event.currentIndex);
 
     // reorder items at the array
-    moveItemInArray(this.requirements, event.previousIndex, event.currentIndex);
+    moveItemInArray(reqs, event.previousIndex, event.currentIndex);
 
     // updat order field
     const startIdx = event.previousIndex <= event.currentIndex ? event.previousIndex : event.currentIndex;
     const endIdx = event.previousIndex > event.currentIndex ? event.previousIndex : event.currentIndex;
     for (let i = startIdx; i <= endIdx; i++) {
-      this.requirements[i].order = i;
+      reqs[i].order = i;
     }
 
-    console.log(this.requirements);
+    console.log(reqs);
 
     try {
-      await this.reqService.updateRequirementsOrder(req.reqId, event.previousIndex, event.currentIndex);
+      await this.reqService.updateRequirementsOrder(req.reqId, req.parentId, event.previousIndex, event.currentIndex);
     } catch (err) {
       this.messageService.addError('Sorry, could not reorder items');
       console.log(err);
     }
   }
 
-  onDragEnded(event: CdkDragEnd): void {
-    // event.source._dragRef.reset();
-  }
 
-  onDragStart(event: CdkDragStart): void {
-    // console.log(event.source._dragRef);
-    this.movingEpics = true;
-
-  }
-
-  toStory(req: Requirement) {
-    const parentId = this.findNewParentIdFor(req);
-    if (!parentId) {
-      return;
-    }
-    req.parentId = parentId;
-  }
-
-  toEpic(req: Requirement) {
-    req.parentId = null;
-  }
-
-  private findNewParentIdFor(req: Requirement): number {
+  private findNewParentFor(req: Requirement): Requirement {
     const reqIdx = this.requirements.indexOf(req);
     if (reqIdx <= 0 ) {
       return null;
@@ -122,12 +165,12 @@ export class ReqListPage implements OnInit {
     const previousReq = this.requirements[reqIdx - 1];
 
     if (!previousReq.parentId) {
-      return previousReq.reqId;
+      return previousReq;
     } else {
-      return previousReq.parentId;
+      return this.requirements.find(r => r.reqId === previousReq.parentId);
     }
-
   }
+
 
 
 }

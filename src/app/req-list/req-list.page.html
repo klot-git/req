@@ -9,21 +9,44 @@
 
 <ion-content>
 
-    <ion-list class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  
 
-    <!-- <ion-item *ngFor="let req of requirements" [routerLink]="'/requirements/' + req.reqId"> -->    
+  <ion-list class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event, requirements)">
+
+    <!-- <ion-item *ngFor="let req of requirements" [routerLink]="'/requirements/' + req.reqId"> -->        
     <ion-item 
       class="req-item"        
-      *ngFor="let req of requirements"
-      (cdkDragEnded)="onDragEnded($event)" (cdkDragStarted)="onDragStart($event)" cdkDrag>
+      *ngFor="let req of requirements" cdkDrag>
+
       <div class="req-placeholder" *cdkDragPlaceholder></div>
-      <ion-label class="req-label" [class.story]="req.parentId != null">
+      
+      <!-- <div *cdkDragPreview>
+        MOVING EPIC
+      </div> -->
+
+      <ion-label class="req-label">
         <div class="req-code">{{req.reqCode}}</div>
         {{req.name}}
+        <ion-icon (click)="toStory(req)" name="arrow-forward-outline"></ion-icon>
+
+        <!-- stories -->
+        <ion-list cdkDropList (cdkDropListDropped)="onDrop($event, req.childs)">
+          <ion-item *ngFor="let child of req.childs" cdkDrag>
+
+            <div class="req-placeholder" *cdkDragPlaceholder></div>
+
+            <ion-label class="req-label story">
+              <div class="req-code">{{child.reqCode}}</div>
+              {{child.name}}
+              <ion-icon (click)="toEpic(child)" name="arrow-back-outline"></ion-icon>      
+            </ion-label>            
+          </ion-item> 
+        </ion-list>
+
       </ion-label>
-      
-      <ion-icon *ngIf="req.parentId == null" (click)="toStory(req)" slot="end" name="arrow-forward-outline"></ion-icon>
-      <ion-icon *ngIf="req.parentId != null"  (click)="toEpic(req)" slot="end" name="arrow-back-outline"></ion-icon>      
+     
+
+
     </ion-item>
 
   </ion-list>

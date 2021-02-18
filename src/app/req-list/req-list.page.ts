@@ -123,7 +123,7 @@ export class ReqListPage implements OnInit {
     this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
 
     // update childs order at db
-    this.reqService.shiftRequirementsOrder(parent.parentId, oldOrder, -1);
+    this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
 
     console.log(this.requirements);
 

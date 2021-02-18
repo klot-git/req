@@ -17,9 +17,7 @@
 }
 
   
-.req-item {    
-    //box-sizing: border-box;
-    cursor: move;
+.req-item {        
     background: white;    
 }
   
@@ -50,3 +48,16 @@ box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     background: red;
     min-height: 20px!important;
 }
+
+.reorder-handle {
+    float: right;
+    color: gray;
+    cursor: move;
+}
+
+.req-item.selected {
+    --background: rgba(var(--ion-color-primary-rgb), 0.14);
+    // background-color: green;
+    //--background: red;
+}
+  

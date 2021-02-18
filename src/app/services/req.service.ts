@@ -36,7 +36,7 @@ export class ReqService {
     }));
   }
 
-  groupRequirements(requirements: Requirement[]): Requirement[] {
+  groupRequirementsIntoEpics(requirements: Requirement[]): Requirement[] {
     const grouped: Requirement[] = [];
 
     requirements.forEach(r => {

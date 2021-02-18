@@ -19,7 +19,9 @@ export class ReqListPage implements OnInit {
 
   form: FormGroup;
 
-  requirements: Requirement[] = [];
+  epics: Requirement[] = [];
+
+  selectedEpic: Requirement = null;
 
   constructor(
     private messageService: MessageService,
@@ -37,29 +39,40 @@ export class ReqListPage implements OnInit {
 
   async loadRequirements() {
     const reqs = await this.reqService.loadRequirements();
+    this.epics = this.reqService.groupRequirementsIntoEpics(reqs);
+  }
 
-    console.log(reqs);
-
-    this.requirements = this.reqService.groupRequirements(reqs);
-
-    console.log(this.requirements);
+  selectEpic(epic: Requirement) {
+    if (this.selectedEpic === epic) {
+      this.selectedEpic = null;
+    } else {
+      this.selectedEpic = epic;
+    }
   }
 
   addRequirement() {
+
     if (!this.form.get('newRequirement').value) {
       return;
+    }
+
+    let collection = this.epics;
+    if (this.selectedEpic) {
+      if (!this.selectedEpic.childs) {
+        this.selectedEpic.childs = [];
+      }
+      collection = this.selectedEpic.childs;
     }
 
     const req = new Requirement();
     req.name = this.form.get('newRequirement').value;
     req.projectId = this.projectService.currentProjectId;
 
-    req.order = this.requirements.length;
+    req.order = collection.length;
+    req.parentId = this.selectedEpic ? this.selectedEpic.reqId : 0;
     req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
 
-    req.parentId = 0;
-
-    this.requirements.push(req);
+    collection.push(req);
     this.form.get('newRequirement').setValue('');
     this.reqService.createRequirement(req);
   }
@@ -76,11 +89,11 @@ export class ReqListPage implements OnInit {
     }
 
     // remove it from the epics collection
-    const idx = this.requirements.findIndex(r => r.reqId === req.reqId);
-    this.requirements.splice(idx, 1);
+    const idx = this.epics.findIndex(r => r.reqId === req.reqId);
+    this.epics.splice(idx, 1);
 
     // update other epics order
-    this.requirements.filter(r => r.order >= req.order).forEach(r => { r.order--; });
+    this.epics.filter(r => r.order >= req.order).forEach(r => { r.order--; });
 
     // add it to the parent childs
     const oldOrder = req.order;
@@ -94,14 +107,14 @@ export class ReqListPage implements OnInit {
     // update epics order at db
     this.reqService.shiftRequirementsOrder(0, oldOrder, -1);
 
-    console.log(this.requirements);
+    console.log(this.epics);
 
   }
 
   toEpic(req: Requirement) {
 
     // finds the parent
-    const parent = this.requirements.find(r => r.reqId === req.parentId);
+    const parent = this.epics.find(r => r.reqId === req.parentId);
     if (!parent) {
       return;
     }
@@ -116,8 +129,8 @@ export class ReqListPage implements OnInit {
     // adds it to the epic collection
     req.parentId = 0;
     const oldOrder = req.order;
-    req.order = this.requirements.length;
-    this.requirements.push(req);
+    req.order = this.epics.length;
+    this.epics.push(req);
 
     // update req parent at db
     this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
@@ -125,7 +138,7 @@ export class ReqListPage implements OnInit {
     // update childs order at db
     this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
 
-    console.log(this.requirements);
+    console.log(this.epics);
 
   }
 
@@ -158,16 +171,16 @@ export class ReqListPage implements OnInit {
 
 
   private findNewParentFor(req: Requirement): Requirement {
-    const reqIdx = this.requirements.indexOf(req);
+    const reqIdx = this.epics.indexOf(req);
     if (reqIdx <= 0 ) {
       return null;
     }
-    const previousReq = this.requirements[reqIdx - 1];
+    const previousReq = this.epics[reqIdx - 1];
 
     if (!previousReq.parentId) {
       return previousReq;
     } else {
-      return this.requirements.find(r => r.reqId === previousReq.parentId);
+      return this.epics.find(r => r.reqId === previousReq.parentId);
     }
   }
 

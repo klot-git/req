@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { ItemReorderEventDetail } from '@ionic/core';
-
-import {CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, CdkDragEnd, CdkDragStart, DropListRef, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-req-list',
@@ -23,7 +22,11 @@ export class ReqListPage implements OnInit {
 
   selectedEpic: Requirement = null;
 
+  isDraggingEpic = false;
+
   constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private reqService: ReqService,
     private projectService: ProjectService
@@ -49,6 +52,13 @@ export class ReqListPage implements OnInit {
     //   this.selectedEpic = epic;
     // }
     this.selectedEpic = epic;
+    setTimeout(() => {
+      if (epic === null) {
+        return;
+      }
+      const f = window.document.getElementById('add-field-' + epic.reqId) as any;
+      f.setFocus();
+    }, 100);
   }
 
   addRequirement() {
@@ -145,6 +155,8 @@ export class ReqListPage implements OnInit {
 
   async onDrop(event: CdkDragDrop<string[]>, reqs: Requirement[]) {
 
+    this.isDraggingEpic = false;
+
     const req = reqs[event.previousIndex];
 
     console.log('id do req:' + req.reqId);
@@ -183,6 +195,16 @@ export class ReqListPage implements OnInit {
     } else {
       return this.epics.find(r => r.reqId === previousReq.parentId);
     }
+  }
+
+  showReqDetail(req: Requirement) {
+    this.router.navigate(['/requirements/' + req.reqId]);
+  }
+
+  onEpicDragStart(e) {
+    this.isDraggingEpic = true;
+    this.cdr.detectChanges();
+    console.log('repaint');
   }
 
 

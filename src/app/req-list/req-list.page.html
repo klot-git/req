@@ -20,7 +20,8 @@
       
       cdkDrag (cdkDragStarted)="onEpicDragStart($event)">
     
-      <ion-item class="req-item" lines="full" (dblclick)="showReqDetail(epic)">
+      <ion-item class="req-item" lines="full" (click)="selectReq(epic)" (dblclick)="showReqDetail(epic)"
+      [class.selected]="epic == selectedReq">
 
         <!-- place holder-->
         <div class="req-placeholder" *cdkDragPlaceholder></div>
@@ -50,7 +51,10 @@
       <!-- stories -->
       <div class="story-list" [class.reduced]="isDraggingEpic">
         <ion-list *ngIf="epic.childs" class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event, epic.childs)">
+
           <ion-item class="req-item" lines="full" *ngFor="let story of epic.childs" cdkDrag
+            [class.selected]="story == selectedReq"
+            (click)="selectReq(story)"
             (dblclick)="showReqDetail(story)">
   
             <div class="req-placeholder" *cdkDragPlaceholder></div>

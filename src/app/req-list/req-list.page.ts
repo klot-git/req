@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import {CdkDragDrop, CdkDragEnd, CdkDragStart, DropListRef, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
@@ -23,7 +23,17 @@ export class ReqListPage implements OnInit {
 
   selectedEpic: Requirement = null;
 
+  selectedReq: Requirement = null;
+
   isDraggingEpic = false;
+
+  @HostListener('window:keyup', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+    console.log(event.key);
+    if (event.key === 'ArrowDown') {
+      this.moveSelectedReqDown();
+    }
+  }
 
   constructor(
     private router: Router,
@@ -69,6 +79,51 @@ export class ReqListPage implements OnInit {
       const f = window.document.getElementById('add-field-' + epic.reqId) as any;
       f.setFocus();
     }, 100);
+  }
+
+  selectReq(req: Requirement) {
+    this.selectedReq = req;
+  }
+
+  moveSelectedReqDown() {
+    if (!this.selectedReq) {
+      return;
+    }
+
+    // if its an epic with no childs, go to the next epic
+    if (this.selectedReq.parentId === 0 && (!this.selectedReq.childs || this.selectedReq.childs.length === 0)) {
+      const idx = this.epics.indexOf(this.selectedReq);
+      if (idx < this.epics.length - 1) {
+        this.selectReq(this.epics[idx + 1]);
+      }
+      return;
+    }
+
+    // if its an epic with no childs, go to the next epic
+    if (this.selectedReq.parentId === 0 && this.selectedReq.childs && this.selectedReq.childs.length > 0) {
+      this.selectReq(this.selectedReq.childs[0]);
+      return;
+    }
+
+    // if its an story
+    if (this.selectedReq.parentId !== 0) {
+      const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
+      if (!parent) {
+        return;
+      }
+      const idx = parent.childs.indexOf(this.selectedReq);
+      if (idx < parent.childs.length - 1) {
+        this.selectReq(parent.childs[idx + 1]);
+        return;
+      }
+
+      const parentIdx = this.epics.indexOf(parent);
+      if (parentIdx < this.epics.length - 1) {
+        this.selectReq(this.epics[parentIdx + 1]);
+      }
+      return;
+    }
+
   }
 
   addRequirement() {

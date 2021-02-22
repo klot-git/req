@@ -120,3 +120,7 @@ ion-list.req-list {
     // opacity: 0;
     display: none;
 }
+
+ion-item.selected {
+    --background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+}

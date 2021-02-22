@@ -11,7 +11,7 @@
 
   <form [formGroup]="form">  
 
-  <ion-list #epiclist class="req-list"
+  <ion-list #epiclist class="req-list" 
     cdkDropList
     (cdkDropListDropped)="onDrop($event, epics)">
     
@@ -48,7 +48,7 @@
       </ion-item>
 
       <!-- stories -->
-      <div [hidden]="isDraggingEpic">
+      <div class="story-list" [class.reduced]="isDraggingEpic">
         <ion-list *ngIf="epic.childs" class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event, epic.childs)">
           <ion-item class="req-item" lines="full" *ngFor="let story of epic.childs" cdkDrag
             (dblclick)="showReqDetail(story)">

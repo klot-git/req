@@ -8,6 +8,7 @@ import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
 import { Router } from '@angular/router';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 
 @Component({
   selector: 'app-req-list',
@@ -27,12 +28,21 @@ export class ReqListPage implements OnInit {
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private events: EventAggregatorService,
     private messageService: MessageService,
     private reqService: ReqService,
     private projectService: ProjectService
   ) {
     this.form = new FormGroup({
       newRequirement: new FormControl('')
+    });
+    events.subscribe('REQ-CHANGED', req => {
+      const myReq = this.findEpicOrStory(req.reqId);
+      if (!myReq) {
+        return;
+      }
+      myReq.name = req.name;
+      myReq.reqCode = req.reqCode;
     });
   }
 
@@ -207,6 +217,19 @@ export class ReqListPage implements OnInit {
     console.log('repaint');
   }
 
+  private findEpicOrStory(reqId: number): Requirement {
+    for (const e of this.epics) {
+      if (e.reqId === reqId) {
+        return e;
+      }
+      for (const s of e.childs) {
+        if (s.reqId === reqId) {
+          return s;
+        }
+      }
+    }
+    return null;
+  }
 
 
 }

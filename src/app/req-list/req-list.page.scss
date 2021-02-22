@@ -103,3 +103,20 @@ ion-list.req-list {
     padding-top: 0px;
     padding-bottom: 0px;
 }
+
+.story-list {
+    // transform: scaleY(1);
+    // transform-origin: top;
+    // transition: transform 0.5s ease;
+    // transition: max-height 0.5s, opacity 0.5s ease-in;
+    // max-height: 300px;
+}
+
+.story-list.reduced {
+    //transform: scaleY(0);
+    // height: 0px;
+    // max-height: 0px;
+    // transition: max-height 0.5s ease-out;
+    // opacity: 0;
+    display: none;
+}

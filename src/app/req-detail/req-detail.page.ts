@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Requirement, RequirementData } from '../requirement';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 import { ReqService } from '../services/req.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class ReqDetailPage implements OnInit {
   req: Requirement;
 
   constructor(
+    private events: EventAggregatorService,
     private reqService: ReqService,
     private route: ActivatedRoute) {
 
@@ -57,6 +59,7 @@ export class ReqDetailPage implements OnInit {
   ionViewWillLeave() {
     this.bindToObject();
     this.reqService.updateRequirement(this.req);
+    this.events.publish('REQ-CHANGED', this.req);
   }
 
 }

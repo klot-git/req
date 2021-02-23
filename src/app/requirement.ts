@@ -4,6 +4,7 @@ export class Requirement {
     public name: string;
     public reqCode: string;
     public order: number;
+    public color: string;
 
     public parentId: number;
 

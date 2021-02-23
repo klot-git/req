@@ -32,7 +32,8 @@ export class ReqService {
       reqCode: doc.reqCode,
       parentId: doc.parentId,
       name: doc.name,
-      order: doc.order
+      order: doc.order,
+      color: doc.color
     }));
   }
 

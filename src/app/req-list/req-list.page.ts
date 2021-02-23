@@ -216,6 +216,7 @@ export class ReqListPage implements OnInit {
     req.order = insertIdx + 1;
     req.parentId = !this.selectedReq ? 0 : this.selectedReq.parentId;
     req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
+    req.color = this.getNewEpicColor();
 
     collection.splice(insertIdx, 0, req);
 
@@ -230,7 +231,9 @@ export class ReqListPage implements OnInit {
     this.reqService.shiftRequirementsOrder(req.parentId, insertIdx, 1);
     this.reqService.createRequirement(req);
 
-    this.selectReq(req);
+    if (this.selectedReq) {
+      this.selectReq(req);
+    }
 
     this.insertingReq = false;
   }
@@ -424,6 +427,11 @@ export class ReqListPage implements OnInit {
       }
     }
     return null;
+  }
+
+  private getNewEpicColor() {
+    const idx = 20 - (this.epics.length % 19);
+    return 'pal' + idx;
   }
 
 

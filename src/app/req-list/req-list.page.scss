@@ -13,14 +13,14 @@
 }
 
 .req-label.story {
-    margin-left: 40px;
+    margin-left: 60px;
     font-weight: normal;
 }
 
   
 ion-item.req-item {        
     background: white;    
-    --padding-start: 0;
+    // --padding-start: 0;
 }
   
 .cdk-drag-preview {
@@ -51,16 +51,7 @@ box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     --background: rgba(var(--ion-color-primary-rgb), 0.14);    
 }
 
-.req-item .drag-handle {
-    cursor: move;
-}
 
-.req-item .show-on-hover {
-    visibility: hidden;
-}
-.req-item:hover .show-on-hover {
-    visibility: visible;
-}
 
 .new-req {
     --padding-start: 0;
@@ -70,31 +61,27 @@ box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
 }
 
 .new-req.story ion-input {
-    padding-left: 40px!important;    
+    padding-left: 60px!important;    
 }
 
-.ident-icon {
-    cursor: pointer;
+.ident-button {
     color: #999;
+    cursor: pointer;
+    line-height: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-top: -2px;
+}
+.ident-button:hover {
+    color: black;
+}
+.ident-button.back {
     position: absolute;
-    left: 0px;
-    top: 18px;
+    margin-top: 0px;
+    left: 36px;
+    top: 20px;
 }
 
-.story .ident-icon {    
-    left: 14px;
-}
-
-.color-marker {
-    width: 10px;
-    position: absolute;
-    background-color: #ddd;
-    height: 100%;
-}
-
-.color-marker.selected {
-    background-color: rgba(var(--ion-color-primary-rgb), 1);
-}
 
 ion-list.req-list {
     padding-top: 0px;
@@ -120,4 +107,9 @@ ion-list.req-list {
 
 ion-item.selected {
     --background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.epic {
+    border-radius: 0px;
+    padding-left: 0px;
 }

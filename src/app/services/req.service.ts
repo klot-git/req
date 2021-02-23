@@ -73,11 +73,11 @@ export class ReqService {
     // updates reqs in between
     if (from < to) {  // if item was moved down
       await this.conn.db.requirements
-        .filter(r => r.projectId === projectId && r.order > from && r.order <= to)
+        .filter(r => r.projectId === projectId && r.parentId === parentId && r.order > from && r.order <= to)
         .modify(r => { r.order = r.order - 1; });
     } else {  // if item was moved up
       await this.conn.db.requirements
-        .filter(r => r.projectId === projectId && r.order >= to && r.order < from)
+        .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= to && r.order < from)
         .modify(r => { r.order = r.order + 1; });
     }
 
@@ -95,6 +95,10 @@ export class ReqService {
       .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)
       .modify(r => { r.order = r.order + step; });
 
+  }
+
+  async removeRequirement(reqId: number) {
+    await this.conn.db.requirements.delete(reqId);
   }
 
 }

@@ -21,17 +21,38 @@ export class ReqListPage implements OnInit {
 
   epics: Requirement[] = [];
 
-  selectedEpic: Requirement = null;
+  insertingReq = false;
 
   selectedReq: Requirement = null;
 
   isDraggingEpic = false;
 
-  @HostListener('window:keyup', ['$event'])
-    keyEvent(event: KeyboardEvent) {
-    console.log(event.key);
-    if (event.key === 'ArrowDown') {
+  @HostListener('window:keyup', ['$event']) keyEvent(event: KeyboardEvent) {
+    // console.log(event);
+    switch (event.key) {
+      case 'Insert':
+      this.insertNewRequirement();
+      break;
+      case 'Delete':
+      this.removeRequirement();
+      break;
+      // case 'Enter':
+      // if (!this.insertingReq) {
+      //   this.showReqDetail(this.selectedReq);
+      // }
+      // break;
+      case 'ArrowRight':
+      this.toStory(this.selectedReq);
+      break;
+      case 'ArrowLeft':
+      this.toEpic(this.selectedReq);
+      break;
+      case 'ArrowDown':
       this.moveSelectedReqDown();
+      break;
+      case 'ArrowUp':
+      this.moveSelectedReqUp();
+      break;
     }
   }
 
@@ -47,7 +68,7 @@ export class ReqListPage implements OnInit {
       newRequirement: new FormControl('')
     });
     events.subscribe('REQ-CHANGED', req => {
-      const myReq = this.findEpicOrStory(req.reqId);
+      const myReq = this.findRequirement(req.reqId);
       if (!myReq) {
         return;
       }
@@ -63,28 +84,28 @@ export class ReqListPage implements OnInit {
   async loadRequirements() {
     const reqs = await this.reqService.loadRequirements();
     this.epics = this.reqService.groupRequirementsIntoEpics(reqs);
+    console.log(this.epics);
   }
 
-  selectEpic(epic: Requirement) {
-    // if (this.selectedEpic === epic) {
-    //   this.selectedEpic = null;
-    // } else {
-    //   this.selectedEpic = epic;
-    // }
-    this.selectedEpic = epic;
+  insertNewRequirement() {
+    this.insertingReq = true;
     setTimeout(() => {
-      if (epic === null) {
+      if (this.selectedReq === null) {
         return;
       }
-      const f = window.document.getElementById('add-field-' + epic.reqId) as any;
+      const f = window.document.getElementById('add-field-' + this.selectedReq.reqId) as any;
       f.setFocus();
     }, 100);
   }
 
   selectReq(req: Requirement) {
     this.selectedReq = req;
+    this.insertingReq = false;
   }
 
+  /**
+   * Moves the selected requirement down.
+   */
   moveSelectedReqDown() {
     if (!this.selectedReq) {
       return;
@@ -99,7 +120,7 @@ export class ReqListPage implements OnInit {
       return;
     }
 
-    // if its an epic with no childs, go to the next epic
+    // if its an epic with childs, go to the first child
     if (this.selectedReq.parentId === 0 && this.selectedReq.childs && this.selectedReq.childs.length > 0) {
       this.selectReq(this.selectedReq.childs[0]);
       return;
@@ -123,6 +144,48 @@ export class ReqListPage implements OnInit {
       }
       return;
     }
+  }
+
+  /**
+   * Moves the selected requirement up.
+   */
+  moveSelectedReqUp() {
+    if (!this.selectedReq) {
+      return;
+    }
+
+    // if its an epic
+    if (this.selectedReq.parentId === 0) {
+      const idx = this.epics.indexOf(this.selectedReq);
+      if (idx === 0) {
+        return;
+      }
+      // if the previous epic has no childs
+      const previousEpic = this.epics[idx - 1];
+      if (!previousEpic.childs || previousEpic.childs.length === 0) {
+        this.selectReq(previousEpic);
+        return;
+      }
+      // if the previous epic has childs
+      this.selectReq(previousEpic.childs[previousEpic.childs.length - 1]);
+      return;
+    }
+
+    // if its a story
+    if (this.selectedReq.parentId !== 0) {
+      const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
+      const idx = parent.childs.indexOf(this.selectedReq);
+
+      // if is not the first child
+      if (idx >= 1) {
+        this.selectReq(parent.childs[idx - 1]);
+        return;
+      }
+
+      // if is the first child, move to the parent
+      this.selectReq(parent);
+
+    }
 
   }
 
@@ -133,30 +196,96 @@ export class ReqListPage implements OnInit {
     }
 
     let collection = this.epics;
-    if (this.selectedEpic) {
-      if (!this.selectedEpic.childs) {
-        this.selectedEpic.childs = [];
+    let insertIdx = this.epics.length;
+    if (this.selectedReq && this.selectedReq.parentId !== 0) {
+      const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
+      if (!parent.childs) {
+        parent.childs = [];
       }
-      collection = this.selectedEpic.childs;
+      collection = parent.childs;
+      insertIdx = collection.indexOf(this.selectedReq) + 1;
+    }
+    if (this.selectedReq && this.selectedReq.parentId === 0) {
+      insertIdx = collection.indexOf(this.selectedReq) + 1;
     }
 
     const req = new Requirement();
     req.name = this.form.get('newRequirement').value;
     req.projectId = this.projectService.currentProjectId;
 
-    req.order = collection.length;
-    req.parentId = this.selectedEpic ? this.selectedEpic.reqId : 0;
+    req.order = insertIdx + 1;
+    req.parentId = !this.selectedReq ? 0 : this.selectedReq.parentId;
     req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
 
-    collection.push(req);
+    collection.splice(insertIdx, 0, req);
+
+    for (let i = insertIdx; i < collection.length; i++) {
+      collection[i].order = i;
+    }
+
+    console.log(collection);
+
     this.form.get('newRequirement').setValue('');
+
+    this.reqService.shiftRequirementsOrder(req.parentId, insertIdx, 1);
     this.reqService.createRequirement(req);
+
+    this.insertingReq = false;
+  }
+
+  removeRequirement(req: Requirement) {
+
+    if (!req) {
+      req = this.selectedReq;
+    }
+    if (!req) {
+      return;
+    }
+
+    let parent: Requirement;
+    let collection = this.epics;
+    if (req.parentId !== 0) {
+      parent = this.epics.find(e => e.reqId === req.parentId);
+      if (!parent) {
+        return;
+      }
+      collection = parent.childs;
+    }
+    const idx = collection.indexOf(req);
+    collection.splice(idx, 1);
+
+    this.reqService.removeRequirement(req.reqId);
+    this.reqService.shiftRequirementsOrder(req.parentId, req.order, -1);
+
+    if (this.selectedReq) {
+      if (idx >= 1 && this.selectedReq.parentId !== 0) {
+        this.selectReq(collection[idx - 1]);
+        return;
+      }
+      if (idx === 0 && this.selectedReq.parentId !== 0) {
+        this.selectReq(parent);
+        return;
+      }
+      if (this.selectedReq.parentId === 0) {
+        const previous = this.findPreviousRequirement(req);
+        if (!previous) {
+          this.selectReq(null);
+          return;
+        }
+        if (!previous.childs || previous.childs.length === 0) {
+          this.selectReq(previous);
+          return;
+        }
+        this.selectReq(previous.childs[previous.childs.length - 1]);
+      }
+    }
+
   }
 
   toStory(req: Requirement) {
 
     // find the new parent
-    const parent = this.findNewParentFor(req);
+    const parent = this.findPreviousParent(req);
     if (!parent) {
       return;
     }
@@ -248,13 +377,16 @@ export class ReqListPage implements OnInit {
   }
 
 
-  private findNewParentFor(req: Requirement): Requirement {
+  private findPreviousRequirement(req: Requirement): Requirement {
     const reqIdx = this.epics.indexOf(req);
     if (reqIdx <= 0 ) {
       return null;
     }
-    const previousReq = this.epics[reqIdx - 1];
+    return this.epics[reqIdx - 1];
+  }
 
+  private findPreviousParent(req: Requirement): Requirement {
+    const previousReq = this.findPreviousRequirement(req);
     if (!previousReq.parentId) {
       return previousReq;
     } else {
@@ -269,10 +401,9 @@ export class ReqListPage implements OnInit {
   onEpicDragStart(e) {
     this.isDraggingEpic = true;
     this.cdr.detectChanges();
-    console.log('repaint');
   }
 
-  private findEpicOrStory(reqId: number): Requirement {
+  private findRequirement(reqId: number): Requirement {
     for (const e of this.epics) {
       if (e.reqId === reqId) {
         return e;

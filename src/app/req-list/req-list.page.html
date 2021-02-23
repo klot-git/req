@@ -16,9 +16,7 @@
     (cdkDropListDropped)="onDrop($event, epics)">
     
     <!-- epics -->  
-    <div *ngFor="let epic of epics" (click)="selectEpic(epic)"
-      
-      cdkDrag (cdkDragStarted)="onEpicDragStart($event)">
+    <div *ngFor="let epic of epics" cdkDrag (cdkDragStarted)="onEpicDragStart($event)">
     
       <ion-item class="req-item" lines="full" (click)="selectReq(epic)" (dblclick)="showReqDetail(epic)"
       [class.selected]="epic == selectedReq">
@@ -38,7 +36,7 @@
           </ion-item>
         </div>
       
-        <div class="color-marker" [class.selected]="epic==selectedEpic" ></div>
+        <div class="color-marker"></div>
         <!-- <ion-icon slot="end" name="reorder-two-outline"  class="show-on-hover drag-handle" cdkDragHandle></ion-icon> -->
         <ion-label class="req-label">
           <ion-icon name="arrow-forward-outline" class="show-on-hover ident-icon" (click)="toStory(epic)" ></ion-icon>
@@ -52,39 +50,45 @@
       <div class="story-list" [class.reduced]="isDraggingEpic">
         <ion-list *ngIf="epic.childs" class="req-list" cdkDropList (cdkDropListDropped)="onDrop($event, epic.childs)">
 
-          <ion-item class="req-item" lines="full" *ngFor="let story of epic.childs" cdkDrag
-            [class.selected]="story == selectedReq"
-            (click)="selectReq(story)"
-            (dblclick)="showReqDetail(story)">
+          <div *ngFor="let story of epic.childs">
+            <ion-item class="req-item" lines="full"  cdkDrag
+              [class.selected]="story == selectedReq"
+              (click)="selectReq(story)"
+              (dblclick)="showReqDetail(story)">
   
-            <div class="req-placeholder" *cdkDragPlaceholder></div>
+              <div class="req-placeholder" *cdkDragPlaceholder></div>
             
-            <div class="color-marker" [class.selected]="epic==selectedEpic" ></div>
-            <!-- <ion-icon slot="end" name="reorder-two-outline" class="show-on-hover drag-handle"  cdkDragHandle></ion-icon>           -->
-            <ion-label class="req-label story">
+              <div class="color-marker"></div>
+              
+              <ion-label class="req-label story">
               <ion-icon name="arrow-back-outline" class="show-on-hover ident-icon" (click)="toEpic(story)" ></ion-icon>
               <div class="req-code">{{story.reqCode}}</div>
-              {{story.name}}                              
-            </ion-label>            
-            
-            
-          </ion-item> 
+                {{story.name}}                              
+              </ion-label>                        
+            </ion-item> 
+            <!-- new story textbox -->
+            <ion-item class="new-req story" *ngIf="story==selectedReq && insertingReq" lines="none">    
+              <div class="color-marker"></div>
+              <ion-input id="add-field-{{story.reqId}}" placeholder="New story" formControlName="newRequirement" 
+                (keyup.enter)="addRequirement();" (keyup.esc)="insertingReq = false"></ion-input>
+            </ion-item>
+          </div>          
         </ion-list>
       </div>
       
-
-      <ion-item class="new-req story" *ngIf="epic==selectedEpic" lines="none">    
-        <div class="color-marker" [class.selected]="epic==selectedEpic" ></div>
-        <ion-input id="add-field-{{epic.reqId}}" placeholder="New story" formControlName="newRequirement" 
-          (keyup.enter)="addRequirement()" (keyup.esc)="selectEpic(null)"
-          ></ion-input>
+      <!-- new epic textbox -->
+      <ion-item class="new-req" *ngIf="epic==selectedReq && insertingReq" lines="none">    
+        <div class="color-marker"></div>
+        <ion-input id="add-field-{{epic.reqId}}" placeholder="New epic" formControlName="newRequirement" 
+          (keyup.enter)="addRequirement();" (keyup.esc)="insertingReq = false"></ion-input>
       </ion-item>
+      
     </div>
 
   </ion-list>
 
 
-  <ion-item class="new-req" *ngIf="!selectedEpic" lines="none">    
+  <ion-item class="new-req" *ngIf="!selectedReq" lines="none">    
     <ion-input placeholder="New epic" (keyup.enter)="addRequirement()" formControlName="newRequirement"></ion-input>          
   </ion-item>
 

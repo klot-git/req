@@ -68,9 +68,6 @@ box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     --inner-padding-top: 0;
     --inner-padding-bottom: 0;
 }
-.new-req ion-input {
-    --background: rgba(var(--ion-color-primary-rgb), 0.1)!important;
-}
 
 .new-req.story ion-input {
     padding-left: 40px!important;    

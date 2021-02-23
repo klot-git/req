@@ -230,10 +230,12 @@ export class ReqListPage implements OnInit {
     this.reqService.shiftRequirementsOrder(req.parentId, insertIdx, 1);
     this.reqService.createRequirement(req);
 
+    this.selectReq(req);
+
     this.insertingReq = false;
   }
 
-  removeRequirement(req: Requirement) {
+  removeRequirement(req: Requirement = null) {
 
     if (!req) {
       req = this.selectedReq;
@@ -241,6 +243,8 @@ export class ReqListPage implements OnInit {
     if (!req) {
       return;
     }
+
+    const previous = this.findPreviousRequirement(req);
 
     let parent: Requirement;
     let collection = this.epics;
@@ -257,6 +261,7 @@ export class ReqListPage implements OnInit {
     this.reqService.removeRequirement(req.reqId);
     this.reqService.shiftRequirementsOrder(req.parentId, req.order, -1);
 
+    // move seleted requirement
     if (this.selectedReq) {
       if (idx >= 1 && this.selectedReq.parentId !== 0) {
         this.selectReq(collection[idx - 1]);
@@ -267,7 +272,6 @@ export class ReqListPage implements OnInit {
         return;
       }
       if (this.selectedReq.parentId === 0) {
-        const previous = this.findPreviousRequirement(req);
         if (!previous) {
           this.selectReq(null);
           return;
@@ -283,6 +287,11 @@ export class ReqListPage implements OnInit {
   }
 
   toStory(req: Requirement) {
+
+    // can not convert to story an epic with childs
+    if (req.childs && req.childs.length > 0) {
+      return;
+    }
 
     // find the new parent
     const parent = this.findPreviousParent(req);

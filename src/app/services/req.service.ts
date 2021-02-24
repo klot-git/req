@@ -62,7 +62,7 @@ export class ReqService {
     return await this.conn.db.requirements.put(req);
   }
 
-  async updateRequirementParent(reqId: number, parentId: number, order: number, color: string) {
+  async updateRequirementParentId(reqId: number, parentId: number, order: number, color: string) {
     return await this.conn.db.requirements.update(reqId, { parentId, order, color });
   }
 

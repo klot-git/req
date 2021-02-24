@@ -346,7 +346,7 @@ export class ReqListPage implements OnInit {
     parent.childs.push(req);
 
     // update req parent at db
-    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order, req.color);
+    this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
 
     // update epics order at db
     this.reqService.shiftRequirementsOrder(0, oldOrder, -1);
@@ -355,6 +355,10 @@ export class ReqListPage implements OnInit {
 
   }
 
+  /**
+   * Converts a given story to epic.
+   * @param req The storyto be converted to epic
+   */
   toEpic(req: Requirement) {
 
     // finds the parent
@@ -367,21 +371,29 @@ export class ReqListPage implements OnInit {
     const idx = parent.childs.findIndex(r => r.reqId === req.reqId);
     parent.childs.splice(idx, 1);
 
-    // update other childs order
+    // update other childs orders
     parent.childs.filter(r => r.order >= req.order).forEach(r => { r.order--; });
+
+    // update epic orders
+    const parentIdx = this.epics.indexOf(parent);
+    this.epics.filter(r => r.order > parentIdx).forEach(r => { r.order++; });
 
     // adds it to the epic collection
     req.parentId = 0;
     const oldOrder = req.order;
-    req.order = this.epics.length;
+    req.order = parentIdx + 1;
     req.color = this.getNewEpicColor();
-    this.epics.push(req);
+    this.epics.splice(parentIdx + 1, 0, req);
 
-    // update req parent at db
-    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order, req.color);
-
-    // update childs order at db
+    // update childs orders at db
     this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
+
+    // update epic orders at db
+    this.reqService.shiftRequirementsOrder(0, req.order, 1);
+
+    // update req parentId at db
+    this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
+
 
     console.log(this.epics);
 

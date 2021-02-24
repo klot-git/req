@@ -59,7 +59,7 @@
               <ion-item class="new-req story" *ngIf="story==selectedReq && insertingReq" lines="none">    
                 <div class="color-marker"></div>
                 <ion-input id="add-field-{{story.reqId}}" placeholder="New story" formControlName="newRequirement" 
-                  (keyup.enter)="addRequirement();" (keyup.esc)="insertingReq = false"></ion-input>
+                  (keyup.enter)="addRequirement($event);" (keyup.esc)="cancelInsertNewRequirement()"></ion-input>
               </ion-item>
             </div>          
           </ion-list>
@@ -70,7 +70,7 @@
       <!-- new epic textbox -->
       <ion-item class="new-req" *ngIf="epic==selectedReq && insertingReq" lines="none">    
         <ion-input id="add-field-{{epic.reqId}}" placeholder="New epic" formControlName="newRequirement" 
-          (keyup.enter)="addRequirement();" (keyup.esc)="insertingReq = false"></ion-input>
+          (keyup.enter)="addRequirement($event);" (keyup.esc)="cancelInsertNewRequirement()"></ion-input>
       </ion-item>
       
     </div>
@@ -79,7 +79,7 @@
 
   <!-- new epic textbox (for no selectedReq) -->  
   <ion-item class="new-req" *ngIf="!selectedReq" lines="none">    
-    <ion-input placeholder="New epic" (keyup.enter)="addRequirement()" formControlName="newRequirement"></ion-input>          
+    <ion-input placeholder="New epic" (keyup.enter)="addRequirement($event)" formControlName="newRequirement"></ion-input>          
   </ion-item>  
   
   

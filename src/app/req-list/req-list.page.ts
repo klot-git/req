@@ -38,11 +38,11 @@ export class ReqListPage implements OnInit {
       case 'Delete':
       this.removeRequirement();
       break;
-      // case 'Enter':
-      // if (!this.insertingReq) {
-      //   this.showReqDetail(this.selectedReq);
-      // }
-      // break;
+      case 'Enter':
+      if (this.selectedReq) {
+        this.showReqDetail(this.selectedReq);
+      }
+      break;
       case 'ArrowRight':
       this.toStory(this.selectedReq);
       break;
@@ -100,8 +100,17 @@ export class ReqListPage implements OnInit {
     }, 100);
   }
 
+  cancelInsertNewRequirement() {
+    this.insertingReq = false;
+    this.form.get('newRequirement').setValue('');
+  }
+
   selectReq(req: Requirement) {
-    this.selectedReq = req;
+    if (this.selectedReq === req) {
+      this.selectedReq = null;
+    } else {
+      this.selectedReq = req;
+    }
     this.insertingReq = false;
   }
 
@@ -191,10 +200,19 @@ export class ReqListPage implements OnInit {
 
   }
 
-  addRequirement() {
+  /**
+   * Adds a new requirement.
+   * @param event The keyboard event that fires the action
+   */
+  addRequirement(event: KeyboardEvent = null) {
+
+    if (event) {
+      event.preventDefault();
+      event.cancelBubble = true;
+    }
 
     if (!this.form.get('newRequirement').value) {
-      return;
+      return false;
     }
 
     let collection = this.epics;
@@ -238,6 +256,8 @@ export class ReqListPage implements OnInit {
     }
 
     this.insertingReq = false;
+
+    return false;
   }
 
   removeRequirement(req: Requirement = null) {
@@ -246,6 +266,10 @@ export class ReqListPage implements OnInit {
       req = this.selectedReq;
     }
     if (!req) {
+      return;
+    }
+
+    if (req.childs && req.childs.length > 0) {
       return;
     }
 
@@ -419,14 +443,20 @@ export class ReqListPage implements OnInit {
     this.cdr.detectChanges();
   }
 
+  /**
+   * Looks at the epics and its stories to find a given requirement.
+   * @param reqId The requirement id
+   */
   private findRequirement(reqId: number): Requirement {
     for (const e of this.epics) {
       if (e.reqId === reqId) {
         return e;
       }
-      for (const s of e.childs) {
-        if (s.reqId === reqId) {
-          return s;
+      if (e.childs) {
+        for (const s of e.childs) {
+          if (s.reqId === reqId) {
+            return s;
+          }
         }
       }
     }
@@ -443,10 +473,5 @@ export class ReqListPage implements OnInit {
     return this.getNewEpicColor(usedCount++);
 
   }
-
-  get newEpicColor() {
-    return this.getNewEpicColor();
-  }
-
 
 }

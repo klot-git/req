@@ -11,6 +11,7 @@ import Mark from 'markup-js';
 
 import { ProjectService } from './project.service';
 import { MessageService } from './message.service';
+import { Requirement } from '../requirement';
 
 
 @Injectable({
@@ -46,10 +47,15 @@ export class TemplateService {
 
     const project = await this.projectService.loadCurrentProject();
     const reqs = await this.reqService.loadRequirements(true);
+    const epics = this.reqService.groupRequirementsIntoEpics(reqs);
+
+    const wbs = this.createWbsSVG(project.name, epics);
 
     const context = {
+      host: 'http://localhost:8100',
       project,
-      requirements: reqs
+      epics,
+      wbsSVG: wbs
     };
 
     const template = await this.http.get('assets/templates/default.html', {responseType: 'text'}).toPromise();
@@ -59,6 +65,12 @@ export class TemplateService {
     this.messageService.isLoadingData = false;
 
     return new Blob([output], {type: 'text/html;charset=utf-8'});
+  }
+
+  private createWbsSVG(projectName: string, epics: Requirement[]) {
+    let svg = '';
+    svg = `<g><rect x="0" y="0" width="100" height="100" fill="red"></rect><text x="0" y="50" width="100" height="100" font-family="Verdana" font-size="10" fill="blue">${projectName}</text></g>`;
+    return `<svg width="100%">${svg}</svg>`;
   }
 
 

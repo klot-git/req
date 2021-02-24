@@ -1,5 +1,6 @@
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="{{host}}/assets/templates/default.css">
         <style>
              <!--
                 @page { 
@@ -19,7 +20,7 @@
                 pre, blockquote {
                     page-break-inside: avoid;
                 }
-}
+            }
         </style>
     </head>
     <body>
@@ -30,11 +31,18 @@
         {{project.description}}
 
         <h2>User Requirements</h2>
+
+        {{wbsSVG}}
         
-        {{requirements}}
-        <h3>{{name}}</h3>
-        {{data.story}}
-        {{/requirements}}
+        {{epics}}
+            <h3>{{name}}</h3>
+            <div style="width: 30px; height: 30px" class="epic {{color}}"></div>
+            {{data.story}}
+            {{childs}}
+                <h4>{{name}}</h4>
+                {{data.story}}
+            {{/childs}}
+        {{/epics}}
         
     <body>
 </html>

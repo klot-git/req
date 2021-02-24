@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Requirement, RequirementData } from '../requirement';
@@ -18,7 +19,19 @@ export class ReqDetailPage implements OnInit {
 
   req: Requirement;
 
+  private cancelEdit = false;
+
+  @HostListener('window:keyup', ['$event']) keyEvent(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'Escape':
+      this.cancelEdit = true;
+      this.location.back();
+      break;
+    }
+  }
+
   constructor(
+    private location: Location,
     private events: EventAggregatorService,
     private reqService: ReqService,
     private route: ActivatedRoute) {
@@ -57,6 +70,9 @@ export class ReqDetailPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    if (this.cancelEdit) {
+      return;
+    }
     this.bindToObject();
     this.reqService.updateRequirement(this.req);
     this.events.publish('REQ-CHANGED', this.req);

@@ -59,9 +59,9 @@ export class ReqListPage implements OnInit {
   }
 
   constructor(
+    events: EventAggregatorService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private events: EventAggregatorService,
     private messageService: MessageService,
     private reqService: ReqService,
     private projectService: ProjectService
@@ -471,7 +471,6 @@ export class ReqListPage implements OnInit {
       }
     }
     return this.getNewEpicColor(usedCount++);
-
   }
 
 }

@@ -96,7 +96,7 @@ export class ReqListPage implements OnInit {
         return;
       }
       const f = window.document.getElementById('add-field-' + this.selectedReq.reqId) as any;
-      f.setFocus();
+      if (f) { f.setFocus(); }
     }, 100);
   }
 
@@ -442,6 +442,10 @@ export class ReqListPage implements OnInit {
     }
     return this.getNewEpicColor(usedCount++);
 
+  }
+
+  get newEpicColor() {
+    return this.getNewEpicColor();
   }
 
 

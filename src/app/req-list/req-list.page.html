@@ -27,11 +27,11 @@
       
         <!-- epic drag preview-->
         <div *cdkDragPreview>
-          <ion-item lines="full" [className]="'epic ' + epic.color">
+          <ion-item lines="full" [className]="'epic ' + epic.color" style="min-width: 100px;">
             <ion-label class="req-label">
               <div class="req-code">{{epic.reqCode}}</div>
               {{epic.name}}      
-              <div *ngIf="epic.childs && epic.childs.length > 0">and its {{epic.childs.length}} storie(s)</div>      
+              <div *ngIf="epic.childs && epic.childs.length > 0">and more {{epic.childs.length}} storie(s)</div>      
             </ion-label>
           </ion-item>
         </div>

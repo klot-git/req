@@ -9,6 +9,8 @@ import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
 import { Router } from '@angular/router';
 import { EventAggregatorService } from '../services/event-aggregator.service';
+import { userInfo } from 'os';
+import { UseExistingWebDriver } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-req-list',
@@ -216,7 +218,7 @@ export class ReqListPage implements OnInit {
     req.order = insertIdx + 1;
     req.parentId = !this.selectedReq ? 0 : this.selectedReq.parentId;
     req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
-    req.color = this.getNewEpicColor();
+    req.color = req.parentId === 0 ? this.getNewEpicColor() : null;
 
     collection.splice(insertIdx, 0, req);
 
@@ -316,10 +318,11 @@ export class ReqListPage implements OnInit {
     const oldOrder = req.order;
     req.order = parent.childs.length;
     req.parentId = parent.reqId;
+    req.color = null;
     parent.childs.push(req);
 
     // update req parent at db
-    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
+    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order, req.color);
 
     // update epics order at db
     this.reqService.shiftRequirementsOrder(0, oldOrder, -1);
@@ -347,10 +350,11 @@ export class ReqListPage implements OnInit {
     req.parentId = 0;
     const oldOrder = req.order;
     req.order = this.epics.length;
+    req.color = this.getNewEpicColor();
     this.epics.push(req);
 
     // update req parent at db
-    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order);
+    this.reqService.updateRequirementParent(req.reqId, req.parentId, req.order, req.color);
 
     // update childs order at db
     this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
@@ -429,9 +433,15 @@ export class ReqListPage implements OnInit {
     return null;
   }
 
-  private getNewEpicColor() {
-    const idx = 20 - (this.epics.length % 19);
-    return 'pal' + idx;
+  private getNewEpicColor(usedCount = 0) {
+    for (let i = 20; i >= 1; i--) {
+      const used = this.epics.filter(e => e.color === 'pal' + i);
+      if (!used || used.length === usedCount) {
+        return 'pal' + i;
+      }
+    }
+    return this.getNewEpicColor(usedCount++);
+
   }
 
 

@@ -3,14 +3,15 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import {CdkDragDrop, CdkDragEnd, CdkDragStart, DropListRef, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
+import { v4 as uuidv4} from 'uuid';
+
 import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
 import { Router } from '@angular/router';
 import { EventAggregatorService } from '../services/event-aggregator.service';
-import { userInfo } from 'os';
-import { UseExistingWebDriver } from 'protractor/built/driverProviders';
+
 
 @Component({
   selector: 'app-req-list',
@@ -123,7 +124,7 @@ export class ReqListPage implements OnInit {
     }
 
     // if its an epic with no childs, go to the next epic
-    if (this.selectedReq.parentId === 0 && (!this.selectedReq.childs || this.selectedReq.childs.length === 0)) {
+    if (this.selectedReq.parentId === '0' && (!this.selectedReq.childs || this.selectedReq.childs.length === 0)) {
       const idx = this.epics.indexOf(this.selectedReq);
       if (idx < this.epics.length - 1) {
         this.selectReq(this.epics[idx + 1]);
@@ -132,13 +133,13 @@ export class ReqListPage implements OnInit {
     }
 
     // if its an epic with childs, go to the first child
-    if (this.selectedReq.parentId === 0 && this.selectedReq.childs && this.selectedReq.childs.length > 0) {
+    if (this.selectedReq.parentId === '0' && this.selectedReq.childs && this.selectedReq.childs.length > 0) {
       this.selectReq(this.selectedReq.childs[0]);
       return;
     }
 
     // if its an story
-    if (this.selectedReq.parentId !== 0) {
+    if (this.selectedReq.parentId !== '0') {
       const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
       if (!parent) {
         return;
@@ -166,7 +167,7 @@ export class ReqListPage implements OnInit {
     }
 
     // if its an epic
-    if (this.selectedReq.parentId === 0) {
+    if (this.selectedReq.parentId === '0') {
       const idx = this.epics.indexOf(this.selectedReq);
       if (idx === 0) {
         return;
@@ -183,7 +184,7 @@ export class ReqListPage implements OnInit {
     }
 
     // if its a story
-    if (this.selectedReq.parentId !== 0) {
+    if (this.selectedReq.parentId !== '0') {
       const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
       const idx = parent.childs.indexOf(this.selectedReq);
 
@@ -217,7 +218,7 @@ export class ReqListPage implements OnInit {
 
     let collection = this.epics;
     let insertIdx = this.epics.length;
-    if (this.selectedReq && this.selectedReq.parentId !== 0) {
+    if (this.selectedReq && this.selectedReq.parentId !== '0') {
       const parent = this.epics.find(e => e.reqId === this.selectedReq.parentId);
       if (!parent.childs) {
         parent.childs = [];
@@ -225,18 +226,19 @@ export class ReqListPage implements OnInit {
       collection = parent.childs;
       insertIdx = collection.indexOf(this.selectedReq) + 1;
     }
-    if (this.selectedReq && this.selectedReq.parentId === 0) {
+    if (this.selectedReq && this.selectedReq.parentId === '0') {
       insertIdx = collection.indexOf(this.selectedReq) + 1;
     }
 
     const req = new Requirement();
+    req.reqId = uuidv4();
     req.name = this.form.get('newRequirement').value;
     req.projectId = this.projectService.projectId;
 
     req.order = insertIdx + 1;
-    req.parentId = !this.selectedReq ? 0 : this.selectedReq.parentId;
+    req.parentId = !this.selectedReq ? '0' : this.selectedReq.parentId;
     req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
-    req.color = req.parentId === 0 ? this.getNewEpicColor() : null;
+    req.color = req.parentId === '0' ? this.getNewEpicColor() : null;
 
     collection.splice(insertIdx, 0, req);
 
@@ -277,7 +279,7 @@ export class ReqListPage implements OnInit {
 
     let parent: Requirement;
     let collection = this.epics;
-    if (req.parentId !== 0) {
+    if (req.parentId !== '0') {
       parent = this.epics.find(e => e.reqId === req.parentId);
       if (!parent) {
         return;
@@ -292,15 +294,15 @@ export class ReqListPage implements OnInit {
 
     // move seleted requirement
     if (this.selectedReq) {
-      if (idx >= 1 && this.selectedReq.parentId !== 0) {
+      if (idx >= 1 && this.selectedReq.parentId !== '0') {
         this.selectReq(collection[idx - 1]);
         return;
       }
-      if (idx === 0 && this.selectedReq.parentId !== 0) {
+      if (idx === 0 && this.selectedReq.parentId !== '0') {
         this.selectReq(parent);
         return;
       }
-      if (this.selectedReq.parentId === 0) {
+      if (this.selectedReq.parentId === '0') {
         if (!previous) {
           this.selectReq(null);
           return;
@@ -349,7 +351,7 @@ export class ReqListPage implements OnInit {
     this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
 
     // update epics order at db
-    this.reqService.shiftRequirementsOrder(0, oldOrder, -1);
+    this.reqService.shiftRequirementsOrder('0', oldOrder, -1);
 
     console.log(this.epics);
 
@@ -379,7 +381,7 @@ export class ReqListPage implements OnInit {
     this.epics.filter(r => r.order > parentIdx).forEach(r => { r.order++; });
 
     // adds it to the epic collection
-    req.parentId = 0;
+    req.parentId = '0';
     const oldOrder = req.order;
     req.order = parentIdx + 1;
     req.color = this.getNewEpicColor();
@@ -389,7 +391,7 @@ export class ReqListPage implements OnInit {
     this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
 
     // update epic orders at db
-    this.reqService.shiftRequirementsOrder(0, req.order, 1);
+    this.reqService.shiftRequirementsOrder('0', req.order, 1);
 
     // update req parentId at db
     this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
@@ -439,7 +441,7 @@ export class ReqListPage implements OnInit {
 
   private findPreviousParent(req: Requirement): Requirement {
     const previousReq = this.findPreviousRequirement(req);
-    if (!previousReq.parentId) {
+    if (previousReq.parentId === '0') {
       return previousReq;
     } else {
       return this.epics.find(r => r.reqId === previousReq.parentId);
@@ -459,7 +461,7 @@ export class ReqListPage implements OnInit {
    * Looks at the epics and its stories to find a given requirement.
    * @param reqId The requirement id
    */
-  private findRequirement(reqId: number): Requirement {
+  private findRequirement(reqId: string): Requirement {
     for (const e of this.epics) {
       if (e.reqId === reqId) {
         return e;

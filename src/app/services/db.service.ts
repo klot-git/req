@@ -27,14 +27,14 @@ export class ConnectionService {
 
 class DB extends Dexie {
 
-  projects: Dexie.Table<Project, number>;
-  requirements: Dexie.Table<Requirement, number>;
+  projects: Dexie.Table<Project, string>;
+  requirements: Dexie.Table<Requirement, string>;
 
   constructor(databaseName) {
       super(databaseName);
       this.version(1).stores({
           projects: 'projectId',
-          requirements: '++reqId,projectId,[parentId+order]',
+          requirements: 'reqId,[parentId+order]',
       });
       this.projects = this.table('projects');
       this.requirements = this.table('requirements');

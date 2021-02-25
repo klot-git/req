@@ -40,7 +40,7 @@ export class ReqService {
     const grouped: Requirement[] = [];
 
     requirements.forEach(r => {
-      if (!r.parentId) {
+      if (r.parentId === '0') {
         grouped.push(r);
       } else {
         const parent = grouped.find(r2 => r2.reqId === r.parentId);
@@ -53,7 +53,7 @@ export class ReqService {
     return grouped;
   }
 
-  async loadRequirement(reqId: number): Promise<Requirement> {
+  async loadRequirement(reqId: string): Promise<Requirement> {
     return await this.conn.db.requirements.get(reqId);
   }
 
@@ -61,12 +61,12 @@ export class ReqService {
     return await this.conn.db.requirements.put(req);
   }
 
-  async updateRequirementParentId(reqId: number, parentId: number, order: number, color: string) {
+  async updateRequirementParentId(reqId: string, parentId: string, order: number, color: string) {
     return await this.conn.db.requirements.update(reqId, { parentId, order, color });
   }
 
 
-  async updateRequirementsOrder(reqId: number, parentId: number, from: number, to: number) {
+  async updateRequirementsOrder(reqId: string, parentId: string, from: number, to: number) {
 
     const projectId = this.projectService.projectId;
 
@@ -87,7 +87,7 @@ export class ReqService {
     await this.conn.db.requirements.put(req);
   }
 
-  async shiftRequirementsOrder(parentId: number, orderFrom: number, step: number) {
+  async shiftRequirementsOrder(parentId: string, orderFrom: number, step: number) {
 
     const projectId = this.projectService.projectId;
 
@@ -97,7 +97,7 @@ export class ReqService {
 
   }
 
-  async removeRequirement(reqId: number) {
+  async removeRequirement(reqId: string) {
     await this.conn.db.requirements.delete(reqId);
   }
 

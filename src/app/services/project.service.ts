@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4} from 'uuid';
 import { Project } from '../project';
 import { ConnectionService } from './db.service';
 

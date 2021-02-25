@@ -16,7 +16,7 @@ const routes: Routes = [
     loadChildren: () => import('./roles-list/roles-list.module').then( m => m.RolesListPageModule)
   },
   {
-    path: ':id/requirements/:prjId',
+    path: ':id/requirements/:reqId',
     loadChildren: () => import('./req-detail/req-detail.module').then( m => m.ReqDetailPageModule)
   },
   {

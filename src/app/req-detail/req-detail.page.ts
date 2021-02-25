@@ -36,7 +36,7 @@ export class ReqDetailPage implements OnInit {
     private reqService: ReqService,
     private route: ActivatedRoute) {
 
-    this.req = { reqId: parseInt(this.route.snapshot.paramMap.get('id'), 10), data: new RequirementData() } as Requirement;
+    this.req = { reqId: this.route.snapshot.paramMap.get('reqId'), data: new RequirementData() } as Requirement;
 
     this.form = new FormGroup({
       name: new FormControl(''),

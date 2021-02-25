@@ -52,7 +52,7 @@ export class TemplateService {
     const wbs = this.createWbsHtml(project.name, epics);
 
     const context = {
-      host: 'http://localhost:8100',
+      host: location.origin,
       project,
       epics,
       wbs

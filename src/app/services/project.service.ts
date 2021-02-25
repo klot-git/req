@@ -32,8 +32,12 @@ export class ProjectService {
       prj = this.startNewProject();
     }
 
-    localStorage.setItem('__lastPrjId', prj.projectId);
+    this.changeCurrentProject(prj.projectId);
     return prj;
+  }
+
+  changeCurrentProject(projectId: string) {
+    localStorage.setItem('__lastPrjId', projectId);
   }
 
   startNewProject(): Project {

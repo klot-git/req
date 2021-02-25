@@ -5,8 +5,11 @@ export class BaseProjectPage {
 
   constructor(
       protected route: ActivatedRoute,
-      protected projectService: ProjectService
-      ) {
+      protected projectService: ProjectService) {
+
+      if (this.projectId !== this.projectService.projectId) {
+        this.projectService.changeCurrentProject(this.projectId)
+      }
   }
 
   get projectId() {

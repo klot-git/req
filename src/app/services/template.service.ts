@@ -49,13 +49,13 @@ export class TemplateService {
     const reqs = await this.reqService.loadRequirements(true);
     const epics = this.reqService.groupRequirementsIntoEpics(reqs);
 
-    const wbs = this.createWbsSVG(project.name, epics);
+    const wbs = this.createWbsHtml(project.name, epics);
 
     const context = {
       host: 'http://localhost:8100',
       project,
       epics,
-      wbsSVG: wbs
+      wbs
     };
 
     const template = await this.http.get('assets/templates/default.html', {responseType: 'text'}).toPromise();
@@ -67,10 +67,33 @@ export class TemplateService {
     return new Blob([output], {type: 'text/html;charset=utf-8'});
   }
 
-  private createWbsSVG(projectName: string, epics: Requirement[]) {
-    let svg = '';
-    svg = `<g><rect x="0" y="0" width="100" height="100" fill="red"></rect><text x="0" y="50" width="100" height="100" font-family="Verdana" font-size="10" fill="blue">${projectName}</text></g>`;
-    return `<svg width="100%">${svg}</svg>`;
+  private createWbsHtml(projectName: string, epics: Requirement[]) {
+
+    let html = ``;
+    html +=  `<div class="project"><div class="box prj">${projectName}</div></div>`;
+    html +=  `<div class="project"><svg height="10" width="2"><line x1="0" y1="0" x2="0" y2="10" class="line" /></svg></div>`;
+
+    let epicsColumns = ``;
+    epics.forEach(e => {
+      let column = ``;
+      if (e.order === 0) {
+        column += `<svg height="2" width="100%"><line x1="50%" y1="0" x2="100%" y2="0" class="line"/></svg>`;
+      } else if (e.order === epics.length - 1) {
+        column += `<svg height="2" width="100%"><line x1="0" y1="0" x2="50%" y2="0" class="line"/></svg>`;
+      } else {
+        column += `<svg height="2" width="100%"><line x1="0" y1="0" x2="100%" y2="0" class="line"/></svg>`;
+      }
+      column += `<svg height="10" width="2"><line x1="0" y1="0" x2="0" y2="10" class="line" /></svg>`;
+      column += `<div class="box epic epicBG ${e.color}">${e.name}</div>`;
+      if (e.childs) {
+        e.childs.forEach(s => {
+          column += `<svg height="10" width="2"><line x1="0" y1="0" x2="0" y2="10" class="line" /></svg><div class="box story epicBG ${e.color}">${s.name}</div>`;
+        });
+      }
+      epicsColumns += `<div class="epic-column">${column}</div>`;
+    });
+    html += `<div class="epics">${epicsColumns}</div>`;
+    return `<div class="wbs">${html}</div>`;
   }
 
 

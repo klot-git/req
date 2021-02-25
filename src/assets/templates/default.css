@@ -1,23 +1,71 @@
-.epic {
+.epicBG {
     -webkit-print-color-adjust: exact;
 }
-.epic.pal1 { background-color: #000000; }
-.epic.pal2 { background-color: #808080; }
-.epic.pal3 { background-color: #000075; }
-.epic.pal4 { background-color: #ffd8b1; }
-.epic.pal5 { background-color: #808000; }
-.epic.pal6 { background-color: #aaffc3; }
-.epic.pal7 { background-color: #800000; }
-.epic.pal8 { background-color: #fffac8; }
-.epic.pal9 { background-color: #9a6324; }
-.epic.pal10 { background-color: #e6beff; }
-.epic.pal11 { background-color: #008080; }
-.epic.pal12 { background-color: #fabebe; }
-.epic.pal13 { background-color: #bcf60c; }
-.epic.pal14 { background-color: #f032e6; }
-.epic.pal15 { background-color: #46f0f0; }
-.epic.pal16 { background-color: #911eb4; }
-.epic.pal17 { background-color: #f58231; }
-.epic.pal18 { background-color: #4363d8;}
-.epic.pal19 { background-color: #ffe119;}
-.epic.pal20 { background-color: #3cb44b; }
+.epicBG.pal1 { background-color: #000000; color: white; }
+.epicBG.pal2 { background-color: #808080; color: white; }
+.epicBG.pal3 { background-color: #000075; color: white; }
+.epicBG.pal4 { background-color: #ffd8b1; color: black; }
+.epicBG.pal5 { background-color: #808000; color: white; }
+.epicBG.pal6 { background-color: #aaffc3; color: black; }
+.epicBG.pal7 { background-color: #800000; color: white; }
+.epicBG.pal8 { background-color: #fffac8; color: black; }
+.epicBG.pal9 { background-color: #9a6324; color: white; }
+.epicBG.pal10 { background-color: #e6beff; color: black; }
+.epicBG.pal11 { background-color: #008080; color: white; }
+.epicBG.pal12 { background-color: #fabebe; color: black; }
+.epicBG.pal13 { background-color: #bcf60c; color: black; }
+.epicBG.pal14 { background-color: #f032e6; color: white; }
+.epicBG.pal15 { background-color: #46f0f0; color: black; }
+.epicBG.pal16 { background-color: #911eb4; color: white; }
+.epicBG.pal17 { background-color: #f58231; color: black; }
+.epicBG.pal18 { background-color: #4363d8; color: white;}
+.epicBG.pal19 { background-color: #ffe119; color: black;}
+.epicBG.pal20 { background-color: #3cb44b; color: black; }
+
+/* WBD */
+.wbs {    
+    background-color: honeydew;
+}
+.wbs .project {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.wbs .line {
+    stroke:rgb(0,0,0);
+    stroke-width:2px;
+    /*stroke-linecap: butt;*/
+}
+
+.wbs .box {    
+    min-width: 60px;
+    max-width: 100px;
+    height: 20px;    
+    border: 1px solid black;
+    border-radius: 3px;        
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*box-shadow: 3px 3px 8px rgba(100, 100, 100, 0.5);*/
+    padding: 8px;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    
+}
+.wbs .box.prj, .wbs .box.epic {
+    border-width: 1px;
+}
+
+.wbs .epics {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.wbs .epic-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

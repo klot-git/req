@@ -28,7 +28,7 @@ export class ProjectService {
   async loadProjectAsCurrent(): Promise<Project> {
     let prj = null;
     if (this.projectId) {
-      await this.loadProject(this.projectId);
+      prj = await this.loadProject(this.projectId);
     }
     if (!prj) {
       prj = { projectId: uuidv4(), name: 'Your first project '} as Project;

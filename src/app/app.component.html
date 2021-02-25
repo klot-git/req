@@ -11,15 +11,15 @@
         <ion-list *ngIf="selectedMenu=='req'" id="inbox-list">
           <ion-list-header>Requirements menu</ion-list-header>
           <ion-menu-toggle auto-hide="false">
-            <ion-item routerDirection="root" [routerLink]="['/summary']" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/' + projectId +'/summary']" lines="none" detail="false">
               <ion-icon slot="start" name="journal-outline"></ion-icon>
               <ion-label>Summary</ion-label>
             </ion-item>
-            <ion-item routerDirection="root" [routerLink]="['/roles']" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/' + projectId +'/roles']" lines="none" detail="false">
               <ion-icon slot="start" name="people-circle"></ion-icon>
               <ion-label>Roles</ion-label>
             </ion-item>
-            <ion-item routerDirection="root" [routerLink]="['/requirements']" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/' + projectId +'/requirements']" lines="none" detail="false">
               <ion-icon slot="start" name="extension-puzzle-outline"></ion-icon>
               <ion-label>Requirements</ion-label>
             </ion-item>
@@ -38,11 +38,11 @@
               <ion-icon slot="start" name="folder-open-outline"></ion-icon>
               <ion-label>Open</ion-label>
             </ion-item>            
-            <ion-item routerDirection="root" [routerLink]="['/export']" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/' + projectId + '/export']" lines="none" detail="false">
               <ion-icon slot="start"  name="share-social-outline"></ion-icon>
               <ion-label>Export</ion-label>
             </ion-item>
-            <ion-item routerDirection="root" [routerLink]="['/print']" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/' + projectId + '/print']" lines="none" detail="false">
               <ion-icon slot="start" name="print"></ion-icon>
               <ion-label>Print</ion-label>
             </ion-item>                        

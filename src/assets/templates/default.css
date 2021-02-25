@@ -23,9 +23,7 @@
 .epicBG.pal20 { background-color: #3cb44b; color: black; }
 
 /* WBD */
-.wbs {    
-    background-color: honeydew;
-}
+.wbs {}
 .wbs .project {
     display: flex;
     flex-direction: row;

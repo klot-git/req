@@ -45,8 +45,8 @@ export class TemplateService {
 
     this.messageService.blockUI();
 
-    const project = await this.projectService.loadCurrentProject();
-    const reqs = await this.reqService.loadRequirements(true);
+    const project = await this.projectService.loadProject(this.projectService.projectId);
+    const reqs = await this.reqService.loadRequirements(this.projectService.projectId, true);
     const epics = this.reqService.groupRequirementsIntoEpics(reqs);
 
     const wbs = this.createWbsHtml(project.name, epics);

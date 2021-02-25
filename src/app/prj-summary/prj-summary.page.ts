@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Project } from '../project';
 import { ProjectService } from '../services/project.service';
 
@@ -14,11 +15,13 @@ export class PrjSummaryPage implements OnInit {
   project: Project;
   form: FormGroup;
 
-  constructor(private projectService: ProjectService) {
+  constructor(
+    private route: ActivatedRoute,
+    private projectService: ProjectService) {
 
     this.project = new Project();
 
-    this.projectService.loadCurrentProject().then(p => {
+    this.projectService.loadProjectAsCurrent().then(p => {
       this.project = p;
       this.bindToScreen();
     });

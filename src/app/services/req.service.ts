@@ -16,14 +16,13 @@ export class ReqService {
     private projectService: ProjectService) {}
 
   async createRequirement(req: Requirement) {
-    req.projectId = this.projectService.currentProjectId;
     req.reqId = await this.conn.db.requirements.put(req);
   }
 
-  async loadRequirements(includeData = false): Promise<Requirement[]> {
+  async loadRequirements(projectId: string, includeData = false): Promise<Requirement[]> {
     const query = await this.conn.db.requirements
       .orderBy('[parentId+order]')
-      .filter(r => r.projectId === this.projectService.currentProjectId);
+      .filter(r => r.projectId === projectId);
     if (includeData) {
       return query.toArray();
     }
@@ -69,7 +68,7 @@ export class ReqService {
 
   async updateRequirementsOrder(reqId: number, parentId: number, from: number, to: number) {
 
-    const projectId = this.projectService.currentProjectId;
+    const projectId = this.projectService.projectId;
 
     // updates reqs in between
     if (from < to) {  // if item was moved down
@@ -90,7 +89,7 @@ export class ReqService {
 
   async shiftRequirementsOrder(parentId: number, orderFrom: number, step: number) {
 
-    const projectId = this.projectService.currentProjectId;
+    const projectId = this.projectService.projectId;
 
     await this.conn.db.requirements
       .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)

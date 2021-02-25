@@ -84,7 +84,7 @@ export class ReqListPage implements OnInit {
   }
 
   async loadRequirements() {
-    const reqs = await this.reqService.loadRequirements();
+    const reqs = await this.reqService.loadRequirements(this.projectService.projectId);
     this.epics = this.reqService.groupRequirementsIntoEpics(reqs);
     console.log(this.epics);
   }
@@ -231,7 +231,7 @@ export class ReqListPage implements OnInit {
 
     const req = new Requirement();
     req.name = this.form.get('newRequirement').value;
-    req.projectId = this.projectService.currentProjectId;
+    req.projectId = this.projectService.projectId;
 
     req.order = insertIdx + 1;
     req.parentId = !this.selectedReq ? 0 : this.selectedReq.parentId;

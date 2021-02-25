@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ConnectionService } from './services/db.service';
 import { MessageService } from './services/message.service';
 import { ProjectService } from './services/project.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
   selectedMenu = 'req';
 
   constructor(
+    private route: ActivatedRoute,
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
@@ -36,11 +38,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.init();
-
   }
 
   private async init() {
     await this.db.initDB();
-    await this.projectService.loadCurrentProject();
   }
+
+  get projectId() {
+    return this.projectService.projectId;
+  }
+
 }

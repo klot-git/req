@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
 import { ProjectService } from '../services/project.service';
 
@@ -10,18 +11,18 @@ import { ProjectService } from '../services/project.service';
   templateUrl: './prj-summary.page.html',
   styleUrls: ['./prj-summary.page.scss'],
 })
-export class PrjSummaryPage implements OnInit {
+export class PrjSummaryPage extends BaseProjectPage implements OnInit {
 
   project: Project;
   form: FormGroup;
 
-  constructor(
-    private route: ActivatedRoute,
-    private projectService: ProjectService) {
+  constructor(route: ActivatedRoute, projectService: ProjectService) {
+
+    super(route, projectService);
 
     this.project = new Project();
 
-    this.projectService.loadProjectAsCurrent().then(p => {
+    this.projectService.loadProjectAsCurrent(this.projectId).then(p => {
       this.project = p;
       this.bindToScreen();
     });
@@ -34,7 +35,6 @@ export class PrjSummaryPage implements OnInit {
   }
 
   ngOnInit() {
-
   }
 
   private bindToScreen() {

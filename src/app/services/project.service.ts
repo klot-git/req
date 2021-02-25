@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { v4 as uuidv4} from 'uuid';
 import { Project } from '../project';
 import { ConnectionService } from './db.service';
@@ -9,46 +8,42 @@ import { ConnectionService } from './db.service';
 })
 export class ProjectService {
 
-  constructor(
-    private route: ActivatedRoute,
-    private conn: ConnectionService) {
+  constructor(private conn: ConnectionService) {
   }
 
-  private get lastProjectId(): string {
+  public get projectId(): string {
     return localStorage.getItem('__lastPrjId');
-  }
-  private set lastProjectId(value: string) {
-    localStorage.setItem('__lastPrjId', value);
   }
 
   async updateProject(prj: Project) {
     await this.conn.db.projects.put(prj);
   }
 
-  async loadProjectAsCurrent(): Promise<Project> {
+  async loadProjectAsCurrent(projectId: string): Promise<Project> {
     let prj = null;
-    if (this.projectId) {
-      prj = await this.loadProject(this.projectId);
+
+    if (projectId === 'new') {
+      prj = this.startNewProject();
+    } else if (projectId) {
+      prj = await this.loadProject(projectId);
     }
+
     if (!prj) {
-      prj = { projectId: uuidv4(), name: 'Your first project '} as Project;
-      this.updateProject(prj);
+      prj = this.startNewProject();
     }
-    this.lastProjectId = prj.projectId;
+
+    localStorage.setItem('__lastPrjId', prj.projectId);
+    return prj;
+  }
+
+  startNewProject(): Project {
+    const prj = { projectId: uuidv4(), name: 'Your first project '} as Project;
+    this.updateProject(prj);
     return prj;
   }
 
   async loadProject(projectId: string): Promise<Project> {
     return await this.conn.db.projects.get({ projectId });
   }
-
-  get projectId() {
-    let prjId = this.route.snapshot.paramMap.get('id');
-    if (prjId === 'last' || !prjId) {
-      prjId = this.lastProjectId;
-    }
-    return prjId;
-  }
-
 
 }

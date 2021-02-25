@@ -9,8 +9,9 @@ import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
 import { ProjectService } from '../services/project.service';
 import { ReqService } from '../services/req.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventAggregatorService } from '../services/event-aggregator.service';
+import { BaseProjectPage } from '../base-project.page';
 
 
 @Component({
@@ -18,7 +19,7 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
   templateUrl: './req-list.page.html',
   styleUrls: ['./req-list.page.scss'],
 })
-export class ReqListPage implements OnInit {
+export class ReqListPage extends BaseProjectPage implements OnInit {
 
   form: FormGroup;
 
@@ -60,13 +61,16 @@ export class ReqListPage implements OnInit {
   }
 
   constructor(
+    route: ActivatedRoute,
+    projectService: ProjectService,
     events: EventAggregatorService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
-    private reqService: ReqService,
-    private projectService: ProjectService
-  ) {
+    private reqService: ReqService) {
+
+    super(route, projectService);
+
     this.form = new FormGroup({
       newRequirement: new FormControl('')
     });
@@ -85,7 +89,7 @@ export class ReqListPage implements OnInit {
   }
 
   async loadRequirements() {
-    const reqs = await this.reqService.loadRequirements(this.projectService.projectId);
+    const reqs = await this.reqService.loadRequirements(this.projectId);
     this.epics = this.reqService.groupRequirementsIntoEpics(reqs);
     console.log(this.epics);
   }

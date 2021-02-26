@@ -83,4 +83,16 @@ export class ProjectService {
     return await this.conn.db.projects.get({ projectId });
   }
 
+  async loadProjects(): Promise<Project[]> {
+    const query = await this.conn.db.projects.where('projectId').above('');
+    return await this.conn.map(query,
+      doc => ({
+        projectId: doc.projectId,
+        name: doc.name,
+        client: doc.client,
+        code: doc.code
+      })
+    );
+  }
+
 }

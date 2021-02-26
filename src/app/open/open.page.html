@@ -9,4 +9,18 @@
 
 <ion-content>
 
+  <div class="boxed-width ion-padding">
+
+    <ion-text>
+      <h1>Recent</h1>
+    </ion-text>
+
+    <ion-card button="true" (click)="openProject(prj.projectId)" *ngFor="let prj of projects">
+      <ion-card-header>
+        <ion-card-subtitle>{{prj.name}} - {{prj.client}}</ion-card-subtitle>      
+      </ion-card-header>        
+    </ion-card>
+
+  </div>
+
 </ion-content>

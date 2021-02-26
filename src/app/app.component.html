@@ -38,7 +38,7 @@
         <ion-list *ngIf="selectedMenu=='files'" id="inbox-list">
           <ion-list-header>Files menu</ion-list-header>
           <ion-menu-toggle auto-hide="false">
-            <ion-item routerDirection="root" lines="none" detail="false">
+            <ion-item routerDirection="root" [routerLink]="['/open']" lines="none" detail="false">
               <ion-icon slot="start" name="folder-open-outline"></ion-icon>
               <ion-label>Open</ion-label>
             </ion-item>            

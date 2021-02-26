@@ -122,5 +122,14 @@ export class TemplateService {
     };
   }
 
+  importFromZip(file) {
+    try {
+      const zip = new PizZip(file);
+      const json = zip.files['project-data.json'].asText();
+    } catch {
+      this.messageService.addError('Invalid zip file or could not find project-data.json');
+    }
+  }
+
 
 }

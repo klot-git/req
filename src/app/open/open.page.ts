@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
 import { ProjectService } from '../services/project.service';
+import { TemplateService } from '../services/template.service';
 
 @Component({
   selector: 'app-open',
@@ -15,7 +16,8 @@ export class OpenPage extends BaseProjectPage implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    projectService: ProjectService) {
+    projectService: ProjectService,
+    private templateService: TemplateService) {
 
     super(route, projectService);
     this.loadProjects();
@@ -31,5 +33,18 @@ export class OpenPage extends BaseProjectPage implements OnInit {
   openProject(projectId: string) {
     this.projectService.changeCurrentProject(projectId);
   }
+
+  importProject(fileChangeEvent){
+    const file = fileChangeEvent.target.files[0];
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log('reading');
+      this.templateService.importFromZip(e.target.result);
+    };
+    reader.readAsBinaryString(fileChangeEvent.target.files[0]);
+
+  }
+
 
 }

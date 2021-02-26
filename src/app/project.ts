@@ -1,6 +1,6 @@
 export class Project {
     public projectId: string;
-    public projectCode: string;
+    public code: string;
     public name: string;
     public client: string;
     public data: ProjectData;

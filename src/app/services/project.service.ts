@@ -4,17 +4,32 @@ import FileSaver from 'file-saver';
 import { Project } from '../project';
 import { Requirement } from '../requirement';
 import { ConnectionService } from './db.service';
+import Dexie from 'dexie';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
 
+  private projectHeader: Project;
+
   constructor(private conn: ConnectionService) {
   }
 
+  public get project(): Project {
+    return this.projectHeader;
+  }
+
   public get projectId(): string {
-    return localStorage.getItem('__lastPrjId');
+
+    if (!this.projectHeader) {
+      const prjJson = localStorage.getItem('__lastPrj');
+      if (!prjJson) {
+        return null;
+      }
+      this.projectHeader = JSON.parse(prjJson);
+    }
+    return this.projectHeader.projectId;
   }
 
   async updateProject(prj: Project) {
@@ -38,17 +53,33 @@ export class ProjectService {
     return prj;
   }
 
-  changeCurrentProject(projectId: string) {
-    localStorage.setItem('__lastPrjId', projectId);
+  async changeCurrentProject(projectId: string) {
+    this.projectHeader = await this.loadProject(projectId);
+    if (!this.projectHeader) {
+      return;
+    }
+    localStorage.setItem('__lastPrj', JSON.stringify(this.projectHeader));
   }
 
   startNewProject(): Project {
-    const prj = { projectId: uuidv4(), name: 'Your first project ', data: {}} as Project;
+    const prj = { projectId: uuidv4(), name: 'Your first project', data: {}} as Project;
     this.updateProject(prj);
     return prj;
   }
 
   async loadProject(projectId: string, includeData = false): Promise<Project> {
+    if (!includeData) {
+      const query = await this.conn.db.projects.where('projectId').equals(projectId);
+      const prjs = await this.conn.map(query,
+        doc => ({
+          projectId: doc.projectId,
+          name: doc.name,
+          client: doc.client,
+          code: doc.code
+        })
+      );
+      return prjs[0] as Project;
+    }
     return await this.conn.db.projects.get({ projectId });
   }
 

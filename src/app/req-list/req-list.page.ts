@@ -453,7 +453,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
   }
 
   showReqDetail(req: Requirement) {
-    this.router.navigate(['/requirements/' + req.reqId]);
+    this.router.navigate([`/${this.projectId}/requirements/${req.reqId}`]);
   }
 
   onEpicDragStart(e) {

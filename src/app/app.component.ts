@@ -7,6 +7,7 @@ import { ConnectionService } from './services/db.service';
 import { MessageService } from './services/message.service';
 import { ProjectService } from './services/project.service';
 import { ActivatedRoute } from '@angular/router';
+import { Project } from './project';
 
 @Component({
   selector: 'app-root',
@@ -44,8 +45,14 @@ export class AppComponent implements OnInit {
     await this.db.initDB();
   }
 
-  get projectId() {
-    return this.projectService.projectId;
+  get project() {
+    let prj = this.projectService.project;
+    if  (!prj) {
+      prj = {  name: '', client: '' } as Project;
+    }
+    return prj;
   }
+
+
 
 }

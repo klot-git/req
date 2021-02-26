@@ -26,7 +26,7 @@ export class ReqService {
     if (includeData) {
       return query.toArray();
     }
-    return this.conn.map(query, doc => ({
+    return await this.conn.map(query, doc => ({
       reqId: doc.reqId,
       reqCode: doc.reqCode,
       parentId: doc.parentId,

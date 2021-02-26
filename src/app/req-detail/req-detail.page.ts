@@ -5,13 +5,16 @@ import { ActivatedRoute } from '@angular/router';
 import { Requirement, RequirementData } from '../requirement';
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { ReqService } from '../services/req.service';
+import { ProjectService } from '../services/project.service';
+import { BaseProjectPage } from '../base-project.page';
+import { sup } from 'pouchdb-find';
 
 @Component({
   selector: 'app-req-detail',
   templateUrl: './req-detail.page.html',
   styleUrls: ['./req-detail.page.scss'],
 })
-export class ReqDetailPage implements OnInit {
+export class ReqDetailPage extends BaseProjectPage implements OnInit {
 
   // https://github.com/KillerCodeMonkey/ngx-quill
 
@@ -31,10 +34,13 @@ export class ReqDetailPage implements OnInit {
   }
 
   constructor(
+    route: ActivatedRoute,
+    projectService: ProjectService,
     private location: Location,
     private events: EventAggregatorService,
-    private reqService: ReqService,
-    private route: ActivatedRoute) {
+    private reqService: ReqService) {
+
+    super(route, projectService);
 
     this.req = { reqId: this.route.snapshot.paramMap.get('reqId'), data: new RequirementData() } as Requirement;
 

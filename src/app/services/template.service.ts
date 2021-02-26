@@ -24,13 +24,33 @@ export class TemplateService {
     private reqService: ReqService) {
   }
 
-  async exportToHtml() {
-    const blob = await this.renderHtml();
+  async exportToHtml(projectId: string) {
+    const blob = await this.renderHtml(projectId);
     FileSaver.saveAs(blob, 'teste.html');
   }
 
-  async print() {
-    const blob = await this.renderHtml();
+  async exportToJson(projectId: string) {
+
+    // read project
+    const project = await this.projectService.loadProject(projectId, true);
+    const requirements = await this.reqService.loadRequirements(projectId, true);
+
+    // create json object
+    const jsonObject = this.createProjectJsonObject(project, requirements);
+
+    // zip it
+    const zip = new PizZip();
+    zip.file('project-data.json', JSON.stringify(jsonObject));
+    const blob = zip.generate({ type: 'blob' });
+
+    // save it
+    const filename = project.client + '-' + project.name + '.zip';
+    FileSaver.saveAs(blob, filename);
+  }
+
+
+  async print(projectId: string) {
+    const blob = await this.renderHtml(projectId);
     const iFrame = document.createElement('iframe');
     iFrame.src = URL.createObjectURL(blob);
     iFrame.onload = () => {
@@ -39,12 +59,12 @@ export class TemplateService {
     document.body.appendChild(iFrame);
   }
 
-  private async renderHtml(): Promise<Blob> {
+  private async renderHtml(projectId: string): Promise<Blob> {
 
     this.messageService.blockUI();
 
-    const project = await this.projectService.loadProject(this.projectService.projectId, true);
-    const reqs = await this.reqService.loadRequirements(this.projectService.projectId, true);
+    const project = await this.projectService.loadProject(projectId, true);
+    const reqs = await this.reqService.loadRequirements(projectId, true);
     const epics = this.reqService.groupRequirementsIntoEpics(reqs);
 
     const wbs = this.createWbsHtml(project.name, epics);
@@ -92,25 +112,6 @@ export class TemplateService {
     });
     html += `<div class="epics">${epicsColumns}</div>`;
     return `<div class="wbs">${html}</div>`;
-  }
-
-  async exportToJson(projectId: string) {
-
-    // read project
-    const project = await this.projectService.loadProject(projectId, true);
-    const requirements = await this.reqService.loadRequirements(projectId, true);
-
-    // create json object
-    const jsonObject = this.createProjectJsonObject(project, requirements);
-
-    // zip it
-    const zip = new PizZip();
-    zip.file('project-data.json', JSON.stringify(jsonObject));
-    const blob = zip.generate({ type: 'blob' });
-
-    // save it
-    const filename = project.client + '-' + project.name + '.zip';
-    FileSaver.saveAs(blob, filename);
   }
 
   createProjectJsonObject(project: Project, requirements: Requirement[]): any {

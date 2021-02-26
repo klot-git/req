@@ -8,7 +8,7 @@ export class BaseProjectPage {
       protected projectService: ProjectService) {
 
       if (this.projectId !== this.projectService.projectId) {
-        this.projectService.changeCurrentProject(this.projectId)
+        this.projectService.changeCurrentProject(this.projectId);
       }
   }
 

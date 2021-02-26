@@ -43,7 +43,7 @@ export class TemplateService {
 
     this.messageService.blockUI();
 
-    const project = await this.projectService.loadProject(this.projectService.projectId);
+    const project = await this.projectService.loadProject(this.projectService.projectId, true);
     const reqs = await this.reqService.loadRequirements(this.projectService.projectId, true);
     const epics = this.reqService.groupRequirementsIntoEpics(reqs);
 
@@ -97,7 +97,7 @@ export class TemplateService {
   async exportToJson(projectId: string) {
 
     // read project
-    const project = await this.projectService.loadProject(projectId);
+    const project = await this.projectService.loadProject(projectId, true);
     const requirements = await this.reqService.loadRequirements(projectId, true);
 
     // create json object

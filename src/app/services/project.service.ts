@@ -27,7 +27,7 @@ export class ProjectService {
     if (projectId === 'new') {
       prj = this.startNewProject();
     } else if (projectId) {
-      prj = await this.loadProject(projectId);
+      prj = await this.loadProject(projectId, true);
     }
 
     if (!prj) {
@@ -43,12 +43,12 @@ export class ProjectService {
   }
 
   startNewProject(): Project {
-    const prj = { projectId: uuidv4(), name: 'Your first project '} as Project;
+    const prj = { projectId: uuidv4(), name: 'Your first project ', data: {}} as Project;
     this.updateProject(prj);
     return prj;
   }
 
-  async loadProject(projectId: string): Promise<Project> {
+  async loadProject(projectId: string, includeData = false): Promise<Project> {
     return await this.conn.db.projects.get({ projectId });
   }
 

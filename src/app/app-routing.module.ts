@@ -24,12 +24,16 @@ const routes: Routes = [
     loadChildren: () => import('./prj-summary/prj-summary.module').then( m => m.PrjSummaryPageModule)
   },
   {
-    path: ':id/export',
-    loadChildren: () => import('./export/export.module').then( m => m.ExportPageModule)
-  },
-  {
     path: ':id/print',
     loadChildren: () => import('./print/print.module').then( m => m.PrintPageModule)
+  },
+  {
+    path: ':id/saveas',
+    loadChildren: () => import('./save/save.module').then( m => m.SavePageModule)
+  },
+  {
+    path: 'open',
+    loadChildren: () => import('./open/open.module').then( m => m.OpenPageModule)
   }
 ];
 

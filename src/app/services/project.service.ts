@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { v4 as uuidv4} from 'uuid';
+import FileSaver from 'file-saver';
 import { Project } from '../project';
+import { Requirement } from '../requirement';
 import { ConnectionService } from './db.service';
 
 @Injectable({

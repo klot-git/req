@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ExportPageRoutingModule } from './export-routing.module';
+import { SavePageRoutingModule } from './save-routing.module';
 
-import { ExportPage } from './export.page';
+import { SavePage } from './save.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ExportPageRoutingModule
+    SavePageRoutingModule
   ],
-  declarations: [ExportPage]
+  declarations: [SavePage]
 })
-export class ExportPageModule {}
+export class SavePageModule {}

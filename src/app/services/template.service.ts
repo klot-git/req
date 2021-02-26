@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { ReqService } from './req.service';
-
 import { HttpClient } from '@angular/common/http';
-
-import PizZip from 'pizzip';
-import PizZipUtils from 'pizzip/utils/index.js';
-import FileSaver from 'file-saver';
-
-import Mark from 'markup-js';
-
 import { ProjectService } from './project.service';
+import { ReqService } from './req.service';
 import { MessageService } from './message.service';
 import { Requirement } from '../requirement';
+
+import FileSaver from 'file-saver';
+import Mark from 'markup-js';
+import { Project } from '../project';
+
 
 
 @Injectable({
@@ -94,6 +91,27 @@ export class TemplateService {
     });
     html += `<div class="epics">${epicsColumns}</div>`;
     return `<div class="wbs">${html}</div>`;
+  }
+
+  async exportToJson(projectId: string) {
+
+    const project = await this.projectService.loadProject(projectId);
+    const requirements = await this.reqService.loadRequirements(projectId, true);
+
+    const jsonObject = this.createProjectJsonObject(project, requirements);
+
+    const filename = project.client + '-' + project.name + '.txt';
+
+    const blob = new Blob([JSON.stringify(jsonObject)], {type: 'text/plain;charset=utf-8'});
+    FileSaver.saveAs(blob, filename);
+  }
+
+  createProjectJsonObject(project: Project, requirements: Requirement[]): any {
+    return {
+      project,
+      requirements,
+      _exportedAt: new Date()
+    };
   }
 
 

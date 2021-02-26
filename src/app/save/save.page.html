@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Save as...</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="boxed-width ion-padding">
+
+    <ion-text>
+      <h1>Where do you want to save this project?</h1>
+    </ion-text>
+
+    <div>
+      <ion-card button="true" class="tile1x" (click)="saveAsLocal()">
+        <ion-card-header>          
+          <ion-card-title>Local file</ion-card-title>
+          <ion-card-content>Expots all project content as a Json file at your local machine</ion-card-content>
+        </ion-card-header>        
+      </ion-card>
+    </div>
+
+  </div>
+
+</ion-content>

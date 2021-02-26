@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { ExportPage } from './export.page';
+import { OpenPage } from './open.page';
 
-describe('ExportPage', () => {
-  let component: ExportPage;
-  let fixture: ComponentFixture<ExportPage>;
+describe('OpenPage', () => {
+  let component: OpenPage;
+  let fixture: ComponentFixture<OpenPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExportPage ],
+      declarations: [ OpenPage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ExportPage);
+    fixture = TestBed.createComponent(OpenPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

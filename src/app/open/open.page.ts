@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
 import { ProjectService } from '../services/project.service';
@@ -17,6 +17,7 @@ export class OpenPage extends BaseProjectPage implements OnInit {
   constructor(
     route: ActivatedRoute,
     projectService: ProjectService,
+    private router: Router,
     private templateService: TemplateService) {
 
     super(route, projectService);
@@ -32,15 +33,17 @@ export class OpenPage extends BaseProjectPage implements OnInit {
 
   openProject(projectId: string) {
     this.projectService.changeCurrentProject(projectId);
+    this.router.navigate([`/${projectId}/summary`]);
   }
 
   importProject(fileChangeEvent){
-    const file = fileChangeEvent.target.files[0];
-
     const reader = new FileReader();
-    reader.onload = (e) => {
-      console.log('reading');
-      this.templateService.importFromZip(e.target.result);
+    reader.onload = async (e) => {
+      const projectId = await this.templateService.importFromZip(e.target.result);
+      if (projectId) {
+        this.projectService.changeCurrentProject(projectId);
+        this.router.navigate([`/${projectId}/summary`]);
+      }
     };
     reader.readAsBinaryString(fileChangeEvent.target.files[0]);
 

@@ -95,4 +95,20 @@ export class ProjectService {
     );
   }
 
+  async saveProject(projectFile: any) {
+
+    await this.removeProject(projectFile);
+
+    await this.conn.db.projects.add(projectFile.project);
+    await this.conn.db.requirements.bulkAdd(projectFile.requirements);
+  }
+
+  async removeProject(projectFile: any) {
+
+    const reqIds = projectFile.requirements.map(r => r.reqId);
+
+    await this.conn.db.projects.delete(projectFile.project.projectId);
+    await this.conn.db.requirements.bulkDelete(reqIds);
+  }
+
 }

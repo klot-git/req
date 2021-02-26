@@ -122,12 +122,22 @@ export class TemplateService {
     };
   }
 
-  importFromZip(file) {
+  async importFromZip(file): Promise<string> {
+    this.messageService.blockUI();
+    this.messageService.isLoadingData = true;
     try {
       const zip = new PizZip(file);
       const json = zip.files['project-data.json'].asText();
+
+      const projectFile = JSON.parse(json);
+
+      await this.projectService.saveProject(projectFile);
+      this.messageService.isLoadingData = false;
+      return projectFile.project.projectId;
     } catch {
       this.messageService.addError('Invalid zip file or could not find project-data.json');
+      this.messageService.isLoadingData = false;
+      return null;
     }
   }
 

@@ -8,6 +8,7 @@ import { Requirement } from '../requirement';
 import FileSaver from 'file-saver';
 import Mark from 'markup-js';
 import { Project } from '../project';
+import PizZip from 'pizzip';
 
 
 
@@ -95,14 +96,20 @@ export class TemplateService {
 
   async exportToJson(projectId: string) {
 
+    // read project
     const project = await this.projectService.loadProject(projectId);
     const requirements = await this.reqService.loadRequirements(projectId, true);
 
+    // create json object
     const jsonObject = this.createProjectJsonObject(project, requirements);
 
-    const filename = project.client + '-' + project.name + '.txt';
+    // zip it
+    const zip = new PizZip();
+    zip.file('project-data.json', JSON.stringify(jsonObject));
+    const blob = zip.generate({ type: 'blob' });
 
-    const blob = new Blob([JSON.stringify(jsonObject)], {type: 'text/plain;charset=utf-8'});
+    // save it
+    const filename = project.client + '-' + project.name + '.zip';
     FileSaver.saveAs(blob, filename);
   }
 

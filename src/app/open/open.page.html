@@ -21,7 +21,7 @@
           {{prj.name}} - {{prj.client}}          
         </ion-card-subtitle>              
       </ion-card-header>
-      <ion-icon (click)="removeProject(prj, $event)" class="remove-icon" name="trash-outline"></ion-icon>
+      <ion-icon *ngIf="this.projectId!==prj.projectId" (click)="confirmRemove(prj, $event)" class="remove-icon" name="trash-outline"></ion-icon>
     </ion-card>
 
     <ion-text>

@@ -10,7 +10,12 @@ export const quillToolbar = {
     ['link', 'image'],                            // link and image, video
     [{ 'align': [] }],
     ['clean'],                                    // remove formatting button
-  ]
+  ],
+  keyboard: {
+    bindings: {
+      tab: false
+    }
+  }
 };
 
 

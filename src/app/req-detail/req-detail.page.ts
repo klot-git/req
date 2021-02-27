@@ -7,7 +7,6 @@ import { EventAggregatorService } from '../services/event-aggregator.service';
 import { ReqService } from '../services/req.service';
 import { ProjectService } from '../services/project.service';
 import { BaseProjectPage } from '../base-project.page';
-import { sup } from 'pouchdb-find';
 
 @Component({
   selector: 'app-req-detail',

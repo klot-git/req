@@ -8,8 +8,9 @@ import { ReqDetailPageRoutingModule } from './req-detail-routing.module';
 
 import { QuillModule } from 'ngx-quill';
 
-import { quillModules } from '../app.module';
+
 import { ReqDetailPage } from './req-detail.page';
+import { SharedModule, quillToolbar } from '../shared/shared.module';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { ReqDetailPage } from './req-detail.page';
     FormsModule, ReactiveFormsModule,
     IonicModule,
     ReqDetailPageRoutingModule,
-    QuillModule.forRoot({modules: quillModules, placeholder: ''})
+    SharedModule,
+    QuillModule.forRoot({modules: quillToolbar, placeholder: ''})
   ],
   declarations: [ReqDetailPage]
 })

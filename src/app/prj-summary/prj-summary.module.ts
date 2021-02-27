@@ -8,7 +8,9 @@ import { PrjSummaryPageRoutingModule } from './prj-summary-routing.module';
 
 import { PrjSummaryPage } from './prj-summary.page';
 import { QuillModule } from 'ngx-quill';
-import { quillModules } from '../app.module';
+
+import { SharedModule, quillToolbar } from '../shared/shared.module';
+
 
 @NgModule({
   imports: [
@@ -16,7 +18,8 @@ import { quillModules } from '../app.module';
     FormsModule, ReactiveFormsModule,
     IonicModule,
     PrjSummaryPageRoutingModule,
-    QuillModule.forRoot({modules: quillModules, placeholder: ''})
+    SharedModule,
+    QuillModule.forRoot({modules: quillToolbar, placeholder: ''})
   ],
   declarations: [PrjSummaryPage]
 })

@@ -30,7 +30,8 @@ export class PrjSummaryPage extends BaseProjectPage implements OnInit {
     this.form = new FormGroup({
       name: new FormControl(this.project.name),
       client: new FormControl(this.project.client),
-      vision: new FormControl(this.project.data.vision)
+      vision: new FormControl(this.project.data.vision),
+      goals: new FormControl(this.project.data.goals)
     });
   }
 
@@ -41,12 +42,14 @@ export class PrjSummaryPage extends BaseProjectPage implements OnInit {
     this.form.get('name').setValue(this.project.name);
     this.form.get('client').setValue(this.project.client);
     this.form.get('vision').setValue(this.project.data.vision);
+    this.form.get('goals').setValue(this.project.data.goals);
   }
 
   private bindToObject() {
     this.project.name = this.form.get('name').value;
     this.project.client = this.form.get('client').value;
     this.project.data.vision = this.form.get('vision').value;
+    this.project.data.goals = this.form.get('goals').value;
   }
 
   ionViewWillLeave() {

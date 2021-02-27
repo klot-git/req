@@ -12,15 +12,16 @@
   <div class="boxed-width ion-padding">
     <form [formGroup]="form">
       <ion-item>
-        <ion-label position="floating">Story name</ion-label>
+        <ion-label position="stacked">Story name</ion-label>
         <ion-input formControlName="name"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Id</ion-label>
+        <ion-label position="stacked">Id</ion-label>
         <ion-input formControlName="reqCode"></ion-input>
       </ion-item>
       <ion-item lines="full">         
-        <quill-editor formControlName="story" [maxLength]="10" [required]="true"></quill-editor>
+        <ion-label position="stacked">Story</ion-label>
+        <quill-editor formControlName="story"  [appAutoFocus]="true"></quill-editor>
       </ion-item>
         
           

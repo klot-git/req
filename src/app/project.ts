@@ -12,4 +12,5 @@ export class Project {
 
 export class ProjectData {
     public vision: string;
+    public goals: string;
 }

@@ -11,15 +11,20 @@
   <div class="boxed-width ion-padding">
     <form [formGroup]="form">    
       <ion-item>
-        <ion-label position="floating">Project name</ion-label>
-        <ion-input placeholder="Name" formControlName="name"></ion-input>
+        <ion-label position="stacked">Project name</ion-label>
+        <ion-input placeholder="Name" formControlName="name" [appAutoFocus]="true"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Client</ion-label>
+        <ion-label position="stacked">Client</ion-label>
         <ion-input placeholder="Client" formControlName="client"></ion-input>
       </ion-item>
       <ion-item lines="full">
-        <quill-editor formControlName="vision" [maxLength]="10" [required]="true"></quill-editor>    
+        <ion-label position="stacked">Vision</ion-label>
+        <quill-editor formControlName="vision"></quill-editor>    
+      </ion-item>
+      <ion-item lines="full">
+        <ion-label position="stacked">Goals</ion-label>
+        <quill-editor formControlName="goals"></quill-editor>    
       </ion-item>
       
       

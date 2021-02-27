@@ -21,7 +21,7 @@ export class ReqService {
 
   async loadRequirements(projectId: string, includeData = false): Promise<Requirement[]> {
     const query = await this.conn.db.requirements
-      .orderBy('[parentId+order]')
+      .orderBy('[projectId+parentId+order]')
       .filter(r => r.projectId === projectId);
     if (includeData) {
       return query.toArray();

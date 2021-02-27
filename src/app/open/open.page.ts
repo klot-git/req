@@ -12,7 +12,7 @@ import { TemplateService } from '../services/template.service';
 })
 export class OpenPage extends BaseProjectPage implements OnInit {
 
-  projects: Project[];
+  projects: Project[] = [];
 
   constructor(
     route: ActivatedRoute,

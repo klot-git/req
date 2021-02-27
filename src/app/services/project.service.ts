@@ -97,18 +97,15 @@ export class ProjectService {
 
   async saveProject(projectFile: any) {
 
-    await this.removeProject(projectFile);
+    await this.removeProject(projectFile.project.projectId);
 
     await this.conn.db.projects.add(projectFile.project);
     await this.conn.db.requirements.bulkAdd(projectFile.requirements);
   }
 
-  async removeProject(projectFile: any) {
-
-    const reqIds = projectFile.requirements.map(r => r.reqId);
-
-    await this.conn.db.projects.delete(projectFile.project.projectId);
-    await this.conn.db.requirements.bulkDelete(reqIds);
+  async removeProject(projectId: string) {
+    await this.conn.db.projects.delete(projectId);
+    await this.conn.db.requirements.where('projectId').equals(projectId).delete();
   }
 
 }

@@ -34,7 +34,7 @@ class DB extends Dexie {
       super(databaseName);
       this.version(1).stores({
           projects: 'projectId',
-          requirements: 'reqId,[parentId+order]',
+          requirements: 'reqId,[projectId+parentId+order],projectId',
       });
       this.projects = this.table('projects');
       this.requirements = this.table('requirements');

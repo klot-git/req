@@ -71,5 +71,26 @@ quill-editor .ql-editor {
 
 ion-card.tile1x {
     width: 300px;
-    height: 150px;
+    min-height: 120px;
+}
+
+ion-card.tile1x.with-icon ion-card-header, ion-card.tile1x.with-icon ion-card-content {
+    margin-left: 66px;    
+}
+
+ion-card.tile1x.with-icon ion-icon {
+    position: absolute;    
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+}
+
+ion-card.tile1x.with-icon:hover ion-icon {
+    color: var(--ion-color-primary);
+}
+
+ion-card.with-hover:hover {
+    cursor: pointer;
+    --background: rgba(var(--ion-color-primary-rgb), 0.14);;
 }

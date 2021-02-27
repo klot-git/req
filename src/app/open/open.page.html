@@ -11,31 +11,27 @@
 
   <div class="boxed-width ion-padding">
 
-    <ion-text>
-      <h1>In memory</h1>
+    <ion-text *ngIf="projects.length > 0">
+      <h1>in memory</h1>
     </ion-text>
 
-    <ion-card button="true" (click)="openProject(prj.projectId)" *ngFor="let prj of projects">
+    <ion-card class="with-hover" (click)="openProject(prj.projectId)" *ngFor="let prj of projects">
       <ion-card-header>
         <ion-card-subtitle>{{prj.name}} - {{prj.client}}</ion-card-subtitle>      
       </ion-card-header>        
     </ion-card>
 
     <ion-text>
-      <h1>Other options</h1>
+      <h1>open from</h1>
     </ion-text>
 
-    <ion-card class="tile1x" (click)="f.click()">
-      <ion-item lines="none">
-        <ion-icon name="cloud-upload" slot="start"></ion-icon>        
-        <!-- <ion-label>Open a local file</ion-label> -->
+    <ion-card class="tile1x with-hover with-icon" (click)="f.click()">      
+        <ion-icon name="cloud-upload"></ion-icon>                
         <ion-card-header>          
-          <ion-card-title>Open a local file</ion-card-title>
-          <ion-card-content>Select a zip file from your local computer</ion-card-content>
-        </ion-card-header>        
-      </ion-item>
-      
-      <input class="ion-hide" #f type="file" (change)="importProject($event)" id="file-input">
+          <ion-card-title>Open a local file</ion-card-title>          
+        </ion-card-header>    
+        <ion-card-content>Select a zip file from your local computer</ion-card-content>            
+        <input class="ion-hide" #f type="file" (change)="importProject($event)" id="file-input">
     </ion-card>
 
 

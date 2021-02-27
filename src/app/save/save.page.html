@@ -16,11 +16,12 @@
     </ion-text>
 
     <div>
-      <ion-card button="true" class="tile1x" (click)="saveAsLocal()">
+      <ion-card class="tile1x with-hover with-icon" (click)="saveAsLocal()">
+        <ion-icon name="cloud-download"></ion-icon>
         <ion-card-header>          
-          <ion-card-title>Local file</ion-card-title>
-          <ion-card-content>Expots all project's content as a Json file at your local machine</ion-card-content>
-        </ion-card-header>        
+          <ion-card-title>Local file</ion-card-title>          
+        </ion-card-header>
+        <ion-card-content>Saves all project's content as a Json file at your local machine</ion-card-content>
       </ion-card>
     </div>
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
+import { EventAggregatorService } from '../services/event-aggregator.service';
 import { ProjectService } from '../services/project.service';
 import { TemplateService } from '../services/template.service';
 
@@ -17,10 +18,14 @@ export class OpenPage extends BaseProjectPage implements OnInit {
   constructor(
     route: ActivatedRoute,
     projectService: ProjectService,
+    private events: EventAggregatorService,
     private router: Router,
     private templateService: TemplateService) {
 
     super(route, projectService);
+  }
+
+  ionViewDidEnter() {
     this.loadProjects();
   }
 
@@ -28,12 +33,12 @@ export class OpenPage extends BaseProjectPage implements OnInit {
   }
 
   async loadProjects() {
-    this.projects = await this.projectService.loadProjects();
+    this.projects = await this.projectService.loadProjects(5);
   }
 
   openProject(projectId: string) {
     this.projectService.changeCurrentProject(projectId);
-    this.router.navigate([`/${projectId}/summary`]);
+    this.navigateToNewProject(projectId);
   }
 
   importProject(fileChangeEvent){
@@ -42,12 +47,25 @@ export class OpenPage extends BaseProjectPage implements OnInit {
       const projectId = await this.templateService.importFromZip(e.target.result);
       if (projectId) {
         this.projectService.changeCurrentProject(projectId);
-        this.router.navigate([`/${projectId}/summary`]);
+        this.navigateToNewProject(projectId);
       }
     };
     reader.readAsBinaryString(fileChangeEvent.target.files[0]);
-
   }
 
+  private navigateToNewProject(projectId: string) {
+    this.router.navigate([`/${projectId}/summary`]);
+    this.events.publish('CHANGE-MENU', 'req');
+  }
+
+  async removeProject(prj: Project, event) {
+    await this.projectService.removeProject(prj.projectId);
+    const idx = this.projects.indexOf(prj);
+    this.projects.splice(idx, 1);
+    if (event) {
+      event.preventDefault();
+      event.cancelBubble = true;
+    }
+  }
 
 }

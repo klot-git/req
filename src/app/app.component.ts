@@ -8,6 +8,7 @@ import { MessageService } from './services/message.service';
 import { ProjectService } from './services/project.service';
 import { ActivatedRoute } from '@angular/router';
 import { Project } from './project';
+import { EventAggregatorService } from './services/event-aggregator.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ import { Project } from './project';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent implements OnInit {
- 
+
   selectedMenu = 'req';
 
   constructor(
@@ -25,9 +26,11 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private db: ConnectionService,
     private projectService: ProjectService,
-    public messageService: MessageService
+    public messageService: MessageService,
+    private events: EventAggregatorService
   ) {
     this.initializeApp();
+    this.events.subscribe('CHANGE-MENU', m => { this.selectedMenu = m; });
   }
 
   initializeApp() {
@@ -51,6 +54,10 @@ export class AppComponent implements OnInit {
       prj = {  name: '', client: '' } as Project;
     }
     return prj;
+  }
+
+  selectMenu(event) {
+    this.selectedMenu = event.detail.value;
   }
 
 

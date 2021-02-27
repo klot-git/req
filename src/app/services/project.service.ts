@@ -5,6 +5,7 @@ import { Project } from '../project';
 import { Requirement } from '../requirement';
 import { ConnectionService } from './db.service';
 import Dexie from 'dexie';
+import { EventAggregatorService } from './event-aggregator.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,10 @@ export class ProjectService {
 
   private projectHeader: Project;
 
-  constructor(private conn: ConnectionService) {
+  constructor(
+    private conn: ConnectionService,
+    private events: EventAggregatorService,
+    ) {
   }
 
   public get project(): Project {
@@ -41,6 +45,7 @@ export class ProjectService {
 
     if (projectId === 'new') {
       prj = this.startNewProject();
+      this.events.publish('CHANGE-MENU', 'req');
     } else if (projectId) {
       prj = await this.loadProject(projectId, true);
     }
@@ -83,8 +88,11 @@ export class ProjectService {
     return await this.conn.db.projects.get({ projectId });
   }
 
-  async loadProjects(): Promise<Project[]> {
-    const query = await this.conn.db.projects.where('projectId').above('');
+  async loadProjects(limit: number = null): Promise<Project[]> {
+    let query = await this.conn.db.projects.where('projectId').above('');
+    if (limit) {
+      query = query.limit(limit);
+    }
     return await this.conn.map(query,
       doc => ({
         projectId: doc.projectId,

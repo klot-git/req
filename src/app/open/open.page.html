@@ -15,10 +15,13 @@
       <h1>in memory</h1>
     </ion-text>
 
-    <ion-card class="with-hover" (click)="openProject(prj.projectId)" *ngFor="let prj of projects">
-      <ion-card-header>
-        <ion-card-subtitle>{{prj.name}} - {{prj.client}}</ion-card-subtitle>      
-      </ion-card-header>        
+    <ion-card class="with-hover" *ngFor="let prj of projects">
+      <ion-card-header (click)="openProject(prj.projectId)">
+        <ion-card-subtitle>
+          {{prj.name}} - {{prj.client}}          
+        </ion-card-subtitle>              
+      </ion-card-header>
+      <ion-icon (click)="removeProject(prj, $event)" class="remove-icon" name="trash-outline"></ion-icon>
     </ion-card>
 
     <ion-text>

@@ -13,8 +13,7 @@
 
         <!-- REQ MENU -->
         <ion-list *ngIf="selectedMenu=='req'" id="inbox-list">
-          <ion-list-header>Requirements menu</ion-list-header>
-          <ion-menu-toggle auto-hide="false">
+          <ion-list-header>Requirements menu</ion-list-header>          
             <ion-item routerDirection="root" [routerLink]="['/' + project.projectId +'/summary']" lines="none" detail="false">
               <ion-icon slot="start" name="journal-outline"></ion-icon>
               <ion-label>Summary</ion-label>
@@ -30,14 +29,16 @@
             <ion-item routerDirection="root" [routerLink]="['/']" lines="none" detail="false">              
               <ion-icon slot="start" name="checkbox-outline"></ion-icon>
               <ion-label>Non-Funcionals</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+            </ion-item>          
         </ion-list>
 
         <!-- FILE MENU -->
         <ion-list *ngIf="selectedMenu=='files'" id="inbox-list">
-          <ion-list-header>Files menu</ion-list-header>
-          <ion-menu-toggle auto-hide="false">
+          <ion-list-header>Files menu</ion-list-header>          
+          <ion-item routerDirection="root" [routerLink]="['/new/summary']" lines="none" detail="false">
+            <ion-icon slot="start" name="folder-open-outline" style="visibility: hidden;"></ion-icon>
+            <ion-label>New</ion-label>
+          </ion-item>            
             <ion-item routerDirection="root" [routerLink]="['/open']" lines="none" detail="false">
               <ion-icon slot="start" name="folder-open-outline"></ion-icon>
               <ion-label>Open</ion-label>
@@ -49,15 +50,14 @@
             <ion-item routerDirection="root" [routerLink]="['/' + project.projectId + '/print']" lines="none" detail="false">
               <ion-icon slot="start" name="print"></ion-icon>
               <ion-label>Print</ion-label>
-            </ion-item>                        
-          </ion-menu-toggle>          
+            </ion-item>                                  
         </ion-list>
 
-        <ion-segment class="menu-selector">
-          <ion-segment-button value="requirements" (click)="selectedMenu = 'req'">
+        <ion-segment class="menu-selector" (ionChange)="selectMenu($event)" [value]="selectedMenu">
+          <ion-segment-button value="requirements" value="req">
             <ion-icon name="extension-puzzle-outline"></ion-icon>
           </ion-segment-button>
-          <ion-segment-button value="file"  (click)="selectedMenu = 'files'">
+          <ion-segment-button value="file" value="files">
             <ion-icon name="folder-open-outline"></ion-icon>
           </ion-segment-button>
         </ion-segment>

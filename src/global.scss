@@ -107,6 +107,9 @@ ion-card.with-hover:hover {
     color: var(--ion-color-danger)!important;
 }
 
-.ql-editor p {
+.ql-editor p, .ql-editor ul, .ql-editor ol, .ql-editor li {
     font-size: 16px;
+}
+.ql-editor ul {
+    margin-top: 8px;
 }

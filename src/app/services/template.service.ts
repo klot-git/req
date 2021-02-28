@@ -71,6 +71,9 @@ export class TemplateService {
 
     const context = {
       host: location.origin,
+      company: {
+        name: 'COMPANY NAME'
+      },
       project,
       epics,
       wbs

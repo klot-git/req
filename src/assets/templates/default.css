@@ -1,3 +1,27 @@
+body {
+    font-family: Roboto, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 120%;
+}
+
+p {
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* PAGE BREAKS */
+@media print {
+    h2 { 
+        page-break-before: always;
+    }
+    h3, h4 {
+        page-break-after: avoid;
+    }
+    pre, blockquote {
+        page-break-inside: avoid;
+    }
+}
+
 .epicBG {
     -webkit-print-color-adjust: exact;
 }
@@ -22,7 +46,27 @@
 .epicBG.pal19 { background-color: #ffe119; color: black;}
 .epicBG.pal20 { background-color: #3cb44b; color: black; }
 
-/* WBD */
+.epic-header span {
+    margin-left: 25px;
+}
+
+.epic-header .color-mark {
+    position: absolute;
+    border: 1px solid black;
+    width: 15px; height: 15px;
+}
+
+/* TOC */
+.toc-list {
+    padding-left: 0px;
+    margin-left: 0px;
+}
+.toc-list li, .toc-list ul, .toc-list ul li{
+    list-style: outside none none !important;
+    line-height: 1.5;
+}
+
+/* WBS */
 .wbs {}
 .wbs .project {
     display: flex;
@@ -36,7 +80,7 @@
     /*stroke-linecap: butt;*/
 }
 
-.wbs .box {    
+.wbs .box {        
     min-width: 60px;
     max-width: 100px;
     height: 20px;    
@@ -48,8 +92,15 @@
     justify-content: center;
     /*box-shadow: 3px 3px 8px rgba(100, 100, 100, 0.5);*/
     padding: 8px;
+    
+    overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 12px;
+    font-size: 10px;
+    line-height: normal;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
     
 }
 .wbs .box.prj, .wbs .box.epic {

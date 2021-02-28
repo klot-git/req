@@ -46,9 +46,15 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
       }
       break;
       case 'ArrowRight':
+      if (this.insertingReq) {
+        return;
+      }
       this.toStory(this.selectedReq);
       break;
       case 'ArrowLeft':
+      if (this.insertingReq) {
+        return;
+      }
       this.toEpic(this.selectedReq);
       break;
       case 'ArrowDown':

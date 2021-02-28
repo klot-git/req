@@ -1,5 +1,6 @@
 <html>
     <head>
+        <title>{{project.name}} - User Requirements Specification</title>
         <link rel="stylesheet" type="text/css" href="{{host}}/assets/templates/default.css">
         <style>
              <!--
@@ -10,39 +11,64 @@
                     widows:2;
                 }
             -->
-            @media print {
-                h2 { 
-                    page-break-before: always;
-                }
-                h3, h4 {
-                    page-break-after: avoid;
-                }
-                pre, blockquote {
-                    page-break-inside: avoid;
-                }
-            }
         </style>
     </head>
     <body>
+        <br><br><br>
         <h1>{{project.name}}</h1>
         <h1>{{project.client}}</h1>
+        <h1>User Requirements Specification</h1>
+        <div style="background-color: black; width: 100%; height: 10px;"></div>
 
-        <h2>Vision</h2>
-        {{project.description}}
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#Introduction">1 Introduction</a></li>
+            <li><a href="#Vision">2 Vision</a></li>
+            <li>
+                <a href="#UserRequirements">3 User requirements</a>
+                <ul>
+                    {{epics}}
+                    <li><a href="#{{reqId}}">{{name}}</a></li>                    
+                    {{/epics}}
+                </ul>                
+            </li>
+            <li><a href="#NonFuncationalRequirements">4 Non functional requirements</a></li>
+            <li><a href="#NonFuncationalRequirements">5 Revisions</a></li>
+        </ul>
 
-        <h2>User Requirements</h2>
+        <h2 id="Introduction">1 Introduction</h2>
+        <p>
+            This is the User Requirements Specification for the <b>{{project.name}}</b>, for use by
+            the Validation Department at <b>{{company.name}}</b>.
+        </p>
+        <p>
+            These requirements will assure that solution will correctly and reliably perform
+            its intended functionality.
+        </p>              
+
+        <h2 id="Vision">2 Vision</h2>
+        {{project.data.vision}}
+        
+        <h3>Goals</h3>
+        {{project.data.goals}}
+
+        <h2 id="UserRequirements">3 User Requirements</h2>
 
         {{wbs}}
         
         {{epics}}
-            <h3>{{name}}</h3>
-            <div style="width: 30px; height: 30px" class="epicBG {{color}}"></div>
+            <h3 class="epic-header" id="{{reqId}}">
+                <div class="color-mark epicBG {{color}}"></div>
+                <span>{{name}}</span>
+            </h3>
+            
             {{data.story}}
             {{childs}}
-                <h4>{{name}}</h4>
+                <h3>{{reqCode}} - {{name}}</h3>
                 {{data.story}}
             {{/childs}}
         {{/epics}}
-        
+
+                
     <body>
 </html>

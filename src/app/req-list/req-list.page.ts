@@ -247,7 +247,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
     req.order = insertIdx + 1;
     req.parentId = !this.selectedReq ? '0' : this.selectedReq.parentId;
-    req.reqCode = 'USR-' + ('000' + (req.order + 1)).substr(-3, 3);
+    req.reqCode = this.getNextReqCode();
     req.color = req.parentId === '0' ? this.getNewEpicColor() : null;
 
     collection.splice(insertIdx, 0, req);
@@ -495,6 +495,17 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
       }
     }
     return this.getNewEpicColor(usedCount++);
+  }
+
+  private getNextReqCode() {
+    let c = 0;
+    this.epics.forEach(e => {
+      c = c + 1;
+      if (e.childs) {
+        c = c + e.childs.length;
+      }
+    });
+    return 'USR-' + ('000' + (c + 1)).substr(-3, 3);
   }
 
 }

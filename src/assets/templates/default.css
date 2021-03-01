@@ -8,6 +8,9 @@ p {
     line-height: 1.5;
     margin-bottom: 10px;
 }
+ul {
+    line-height: 1.5;
+}
 
 /* PAGE BREAKS */
 @media print {
@@ -62,8 +65,7 @@ p {
     margin-left: 0px;
 }
 .toc-list li, .toc-list ul, .toc-list ul li{
-    list-style: outside none none !important;
-    line-height: 1.5;
+    list-style: outside none none !important;    
 }
 
 /* WBS */

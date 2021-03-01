@@ -30,24 +30,6 @@
 @import '~quill/dist/quill.bubble.css';
 @import '~quill/dist/quill.snow.css';
 
-quill-editor {
-    width: 100%;
-    border: none;
-}
-
-quill-editor .ql-toolbar {
-    border: none!important;
-    padding-left: 0px!important;
-    margin-left: -8px!important;
-}
-
-quill-editor .ql-container {
-    border: none!important;
-}
-
-quill-editor .ql-editor {
-    padding-left: 0px;
-}
 .epic.pal1 { border-left: #000000 solid 3px; }
 .epic.pal2 { border-left: #808080 solid 3px; }
 .epic.pal3 { border-left: #000075 solid 3px; }
@@ -107,9 +89,49 @@ ion-card.with-hover:hover {
     color: var(--ion-color-danger)!important;
 }
 
-.ql-editor p, .ql-editor ul, .ql-editor ol, .ql-editor li {
+/* QUILL */
+quill-editor {
+    width: 100%;
+    border: none;
+    display: flex;
+    flex-direction: column-reverse; 
+}
+
+.quill-item:focus-within {
+    // --border-color: var(--highlight-color-valid);
+    border-bottom: 2px var(--highlight-color-valid) solid;
+}
+.quill-item:focus-within .ql-editor {
+    padding-bottom: 0px;
+}
+.quill-item:focus-within .ql-toolbar {
+    display: block;    
+}
+.quill-item:focus-within ion-label {
+    color: var(--ion-color-primary);
+}
+
+quill-editor .ql-toolbar {
+    display: none;
+    border: none!important;
+    padding-left: 0px!important;
+    margin-left: -8px!important;        
+}
+.ql-snow .ql-formats {
+    opacity: 0.7; 
+}
+
+quill-editor .ql-container {
+    border: none!important;
+}
+
+quill-editor .ql-editor {
+    padding-left: 0px;    
+}
+
+quill-editor .ql-editor p, quill-editor .ql-editor ul, quill-editor .ql-editor ol, quill-editor .ql-editor li {
     font-size: 16px;
 }
-.ql-editor ul {
+quill-editor .ql-editor ul {
     margin-top: 8px;
 }

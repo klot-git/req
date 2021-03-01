@@ -19,7 +19,7 @@ import { SharedModule, quillToolbar } from '../shared/shared.module';
     IonicModule,
     PrjSummaryPageRoutingModule,
     SharedModule,
-    QuillModule.forRoot({modules: quillToolbar, placeholder: ''})
+    QuillModule.forRoot({modules: quillToolbar, placeholder: '' })
   ],
   declarations: [PrjSummaryPage]
 })

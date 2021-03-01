@@ -20,10 +20,4 @@ export class BaseProjectPage {
     return urlPrjId;
   }
 
-  ionViewDidEnter() {
-    // remove tabs from QUILL toolbar
-    const tabHideEls = document.querySelectorAll('.ql-toolbar button, .ql-toolbar select, .ql-toolbar .ql-picker-label');
-    tabHideEls.forEach(e => { e.setAttribute('tabindex', '-1'); });
-  }
-
 }

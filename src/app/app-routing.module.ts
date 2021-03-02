@@ -34,6 +34,10 @@ const routes: Routes = [
   {
     path: 'open',
     loadChildren: () => import('./open/open.module').then( m => m.OpenPageModule)
+  },
+  {
+    path: ':id/non-f-requirements',
+    loadChildren: () => import('./nonreq-list/nonreq-list.module').then( m => m.NonreqListPageModule)
   }
 ];
 

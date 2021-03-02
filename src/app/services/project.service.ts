@@ -109,11 +109,13 @@ export class ProjectService {
 
     await this.conn.db.projects.add(projectFile.project);
     await this.conn.db.requirements.bulkAdd(projectFile.requirements);
+    await this.conn.db.nonfrequirements.bulkAdd(projectFile.requirements);
   }
 
   async removeProject(projectId: string) {
     await this.conn.db.projects.delete(projectId);
     await this.conn.db.requirements.where('projectId').equals(projectId).delete();
+    await this.conn.db.nonfrequirements.where('projectId').equals(projectId).delete();
   }
 
 }

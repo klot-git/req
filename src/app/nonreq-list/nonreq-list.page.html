@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Non functional requirements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="boxed-width ion-padding">
+    <form [formGroup]="form">
+      <ion-item
+        formArrayName="reqs"
+        *ngFor="let req of form.controls.reqs.controls; let i = index;">
+          <div [formGroupName]="i" class="row">
+            <div class="id-field">
+              <ion-label position="stacked">Id</ion-label>
+              <ion-input formControlName="reqCode" (focusout)="updateRequirement(req)"></ion-input>
+            </div>
+            <div>
+              <ion-label position="stacked">Requirement</ion-label>
+              <ion-textarea formControlName="description" autoGrow="true" (focusout)="updateRequirement(req)"></ion-textarea>
+            </div>                      
+          </div>        
+          </ion-item>      
+    </form>
+
+    <ion-button (click)="addRequirement()">add</ion-button>
+
+  </div>
+
+  
+
+</ion-content>

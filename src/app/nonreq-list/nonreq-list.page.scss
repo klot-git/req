@@ -2,13 +2,14 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-items: stretch;
 }
 
-.row ion-item {
+.row div {
     flex-grow: 1;
 }
 
-.row ion-item.id-field {
+.row div.id-field {
     flex-basis: 200px;
     flex-grow: 0;    
 }

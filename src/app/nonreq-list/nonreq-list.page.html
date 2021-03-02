@@ -8,7 +8,7 @@
 
   <div class="boxed-width ion-padding">
     <form [formGroup]="form">
-      <ion-item
+      <ion-item class="req"
         formArrayName="reqs"
         *ngFor="let req of form.controls.reqs.controls; let i = index;">
           <div [formGroupName]="i" class="row">
@@ -21,7 +21,9 @@
               <ion-textarea formControlName="description" rows="1" autoGrow="true" (focusout)="updateRequirement(req)"></ion-textarea>
             </div>                      
           </div>        
-          </ion-item>      
+          <ion-icon name="trash-outline" slot="end" class="remove-button" (click)="removeRequirement(req)"></ion-icon>          
+            
+      </ion-item>      
     </form>
 
     <ion-button (click)="addRequirement()">add</ion-button>

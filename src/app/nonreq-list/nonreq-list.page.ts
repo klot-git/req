@@ -17,9 +17,6 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   form: FormGroup;
 
-
-  requirements: NonFRequirement[] = [];
-
   constructor(
     router: ActivatedRoute,
     projectService: ProjectService,
@@ -35,16 +32,15 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   private async loadRequirements() {
     const reqsForms = this.form.get('reqs') as FormArray;
-    this.requirements = await this.reqService.loadRequirements(this.projectId);
-    this.requirements.forEach(r => { reqsForms.push(this.createReqForm(r)); });
-
+    const requirements = await this.reqService.loadRequirements(this.projectId);
+    requirements.forEach(r => { reqsForms.push(this.createReqForm(r)); });
   }
 
   addRequirement() {
     const newReq = { reqId: uuidv4(), reqCode: this.getNextCode(), description: '', projectId: this.projectId } as NonFRequirement;
     const reqsForms = this.form.get('reqs') as FormArray;
     reqsForms.push(this.createReqForm(newReq));
-    this.requirements.push(newReq);
+
     this.reqService.updateRequirement(newReq);
   }
 
@@ -53,9 +49,19 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
       reqId: reqForm.get('reqId').value,
       reqCode: reqForm.get('reqCode').value,
       description: reqForm.get('description').value,
-      projectId: this.projectId } as NonFRequirement;
+      projectId: this.projectId
+    } as NonFRequirement;
 
     this.reqService.updateRequirement(req);
+  }
+
+  async removeRequirement(reqForm: FormGroup) {
+    const reqId = reqForm.get('reqId').value;
+    await this.reqService.removeRequirement(reqId);
+
+    const reqsForms = this.form.get('reqs') as FormArray;
+    const formIdx = reqsForms.controls.indexOf(reqForm);
+    reqsForms.removeAt(formIdx);
   }
 
   private createReqForm(req: NonFRequirement): FormGroup {
@@ -67,10 +73,11 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
   }
 
   private getNextCode() {
+    const reqsForms = this.form.get('reqs') as FormArray;
     let c = 1;
     while (c <= 999) {
       const code = 'NR-' + ('000' + (c)).substr(-3, 3);
-      if (this.requirements.findIndex(r => r.reqCode === code) < 0) {
+      if (reqsForms.controls.findIndex(r => r.get('reqCode').value === code) < 0) {
         return code;
       }
       c++;

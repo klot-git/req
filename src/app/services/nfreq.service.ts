@@ -20,4 +20,9 @@ export class NonFunctionalRequirementService {
       .orderBy('[reqCode+projectId]')
       .filter(r => r.projectId === projectId).toArray();
   }
+
+  async removeRequirement(reqId: string) {
+    await this.conn.db.nonfrequirements.delete(reqId);
+  }
+
 }

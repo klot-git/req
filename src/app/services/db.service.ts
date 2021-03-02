@@ -30,7 +30,7 @@ class DB extends Dexie {
 
   projects: Dexie.Table<Project, string>;
   requirements: Dexie.Table<Requirement, string>;
-  nonfrequirements: Dexie.Table<NonFRequirement, [string, string]>;
+  nonfrequirements: Dexie.Table<NonFRequirement, string>;
 
   constructor(databaseName) {
       super(databaseName);

@@ -18,3 +18,14 @@ ion-textarea {
     min-height: 20px;
     --padding-top: 0px!important;
 }
+
+.req .remove-button {
+    display: none;
+    color: #616e7e;
+    margin-top: 14px;
+    cursor: pointer;
+}
+
+.req:focus-within .remove-button {
+    display: block;
+}

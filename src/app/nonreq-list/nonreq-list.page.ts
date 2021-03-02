@@ -6,6 +6,8 @@ import { NonFRequirement } from '../non-f-requirement';
 import { NonFunctionalRequirementService } from '../services/nfreq.service';
 import { ProjectService } from '../services/project.service';
 
+import { v4 as uuidv4} from 'uuid';
+
 @Component({
   selector: 'app-nonreq-list',
   templateUrl: './nonreq-list.page.html',
@@ -39,7 +41,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
   }
 
   addRequirement() {
-    const newReq = { reqCode: this.getNextId(), description: '', projectId: this.projectId } as NonFRequirement;
+    const newReq = { reqId: uuidv4(), reqCode: this.getNextCode(), description: '', projectId: this.projectId } as NonFRequirement;
     const reqsForms = this.form.get('reqs') as FormArray;
     reqsForms.push(this.createReqForm(newReq));
     this.requirements.push(newReq);
@@ -48,6 +50,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   updateRequirement(reqForm: FormGroup) {
     const req = {
+      reqId: reqForm.get('reqId').value,
       reqCode: reqForm.get('reqCode').value,
       description: reqForm.get('description').value,
       projectId: this.projectId } as NonFRequirement;
@@ -57,12 +60,13 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   private createReqForm(req: NonFRequirement): FormGroup {
     return new FormGroup({
+      reqId: new FormControl(req.reqId),
       reqCode: new FormControl(req.reqCode),
       description: new FormControl(req.description)
     });
   }
 
-  private getNextId() {
+  private getNextCode() {
     let c = 1;
     while (c <= 999) {
       const code = 'NR-' + ('000' + (c)).substr(-3, 3);

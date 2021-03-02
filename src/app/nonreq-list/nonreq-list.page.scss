@@ -10,6 +10,11 @@
 }
 
 .row div.id-field {
-    flex-basis: 200px;
+    flex-basis: 100px;
     flex-grow: 0;    
+}
+
+ion-textarea {
+    min-height: 20px;
+    --padding-top: 0px!important;
 }

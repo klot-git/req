@@ -104,11 +104,37 @@ ion-item.selected {
 }
 
 .menu-selector {
-  position: absolute;
-  bottom: 0px;
-  border-top: 1px solid var(--ion-color-step-150, #d7d8da);
+  flex-direction: column;
+  width: 60px;
+  min-width: 0px;
+  align-items: center;
+  justify-content: start;
+  border-right: 1px solid var(--ion-color-step-150, #d7d8da);
+
 }
+.menu-selector ion-segment-button {
+  min-width: 60px;
+  height: 60px;
+  flex-grow: 0;
+}
+
 
 .project-info {
   color:gray;
+}
+
+.menus-container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100%);
+}
+.menus {
+  display: flex;  
+  flex-direction: column;
+}
+
+ion-menu ion-content {
+  --padding-top: 0px!important;
+  --padding-bottom: 0px!important;
+  --padding-start: 0px!important;
 }

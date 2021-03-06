@@ -23,7 +23,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
     private reqService: NonFunctionalRequirementService) {
 
       super(router, projectService);
-      this.form = new FormGroup( { reqs: new FormArray([])});
+      this.form = new FormGroup( { reqs: new FormArray([]) });
       this.loadRequirements();
   }
 
@@ -73,6 +73,9 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
   }
 
   private getNextCode() {
+    if (!this.form || !this.form.get('reqs')) {
+      return 'NR-001';
+    }
     const reqsForms = this.form.get('reqs') as FormArray;
     let c = 1;
     while (c <= 999) {

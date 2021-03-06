@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { MenuController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ConnectionService } from './services/db.service';
 import { MessageService } from './services/message.service';
 import { ProjectService } from './services/project.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from './project';
 import { EventAggregatorService } from './services/event-aggregator.service';
 
@@ -18,9 +18,11 @@ import { EventAggregatorService } from './services/event-aggregator.service';
 export class AppComponent implements OnInit {
 
   selectedMenu = 'req';
+  subMenuHidden = false;
 
   constructor(
-    private route: ActivatedRoute,
+    private menu: MenuController,
+    private router: Router,
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
@@ -60,6 +62,36 @@ export class AppComponent implements OnInit {
     this.selectedMenu = event.detail.value;
   }
 
+  goToProject(page: string) {
+    this.router.navigate([`/${this.project.projectId}/${page}`]);
+    this.hideMenuByWidth();
+  }
+
+  goTo(page: string) {
+    this.router.navigate([`/${page}`]);
+    this.hideMenuByWidth();
+  }
+
+  private hideMenuByWidth() {
+    console.log(this.platform.width());
+    if (this.platform.width() < 1200) {
+      this.subMenuHidden = true;
+    }
+    this.menu.close();
+  }
+
+  menuClick(event) {
+    const value = event.target.attributes.value.value;
+    if (this.selectedMenu === value) {
+      this.subMenuHidden = !this.subMenuHidden;
+      return;
+    }
+    this.subMenuHidden = false;
+  }
+
+  hideSubmenu() {
+    this.subMenuHidden = true;
+  }
 
 
 }

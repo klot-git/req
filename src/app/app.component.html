@@ -3,88 +3,114 @@
   <!-- Block UI -->
   <ion-backdrop *ngIf="messageService.isUIBlocked" visible="true"></ion-backdrop>
 
-  <ion-split-pane contentId="main-content">
+  <ion-split-pane contentId="main-content" [class.half-open]="subMenuHidden">
           
     <ion-menu contentId="main-content" type="overlay">
         <ion-content>
-          <div class="menus-container">
+          
+          <!-- MENU SELECTOR -->
+          <ion-segment class="menu-selector" (ionChange)="selectMenu($event)" [value]="selectedMenu">
+            <ion-segment-button value="files" (click)="menuClick($event)">
+              <ion-icon name="folder-open-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="req" (click)="menuClick($event)">
+              <ion-icon name="extension-puzzle-outline"></ion-icon>
+            </ion-segment-button>            
+            <ion-segment-button value="plan" (click)="menuClick($event)">
+              <ion-icon name="bar-chart-outline"></ion-icon>
+            </ion-segment-button>                    
+            <ion-segment-button value="proposal" (click)="menuClick($event)">
+              <ion-icon name="cash-outline"></ion-icon>
+            </ion-segment-button>                    
+            <ion-segment-button value="settings" (click)="menuClick($event)">
+              <ion-icon name="settings-outline"></ion-icon>
+            </ion-segment-button>          
+          </ion-segment>
 
-            <!-- MENU SELECTOR -->
-            <ion-segment class="menu-selector" (ionChange)="selectMenu($event)" [value]="selectedMenu">
-              <ion-segment-button value="requirements" value="req">
-                <ion-icon name="extension-puzzle-outline"></ion-icon>
-              </ion-segment-button>
-              <ion-segment-button value="file" value="files">
-                <ion-icon name="folder-open-outline"></ion-icon>
-              </ion-segment-button>
-              <ion-segment-button value="file" value="proposal">
-                <ion-icon name="bar-chart-outline"></ion-icon>
-              </ion-segment-button>                    
-              <ion-segment-button value="file" value="proposal">
-                <ion-icon name="cash-outline"></ion-icon>
-              </ion-segment-button>                    
-              <ion-segment-button value="file" value="company">
-                <ion-icon name="business-outline"></ion-icon>
-              </ion-segment-button>          
-            </ion-segment>
-
-            <!-- MENUS -->
-            <div class="menus">
-
-              <div class="project-info ion-padding">
-                <span *ngIf="project && project.name">{{project.name}}</span>
-                <span *ngIf="project && project.client"> - {{project.client}}</span>
-              </div>
-        
-              <!-- REQ MENU -->
-              <ion-list *ngIf="selectedMenu=='req'" id="inbox-list">
-                <ion-list-header>Requirements menu</ion-list-header>          
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId +'/summary']" lines="none" detail="false">
-                    <ion-icon slot="start" name="reader-outline"></ion-icon>
-                    <ion-label>Summary</ion-label>
-                  </ion-item>
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId +'/roles']" lines="none" detail="false">
-                    <ion-icon slot="start" name="people-circle"></ion-icon>
-                    <ion-label>Roles</ion-label>
-                  </ion-item>
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId +'/requirements']" lines="none" detail="false">
-                    <ion-icon slot="start" name="extension-puzzle-outline"></ion-icon>
-                    <ion-label>Requirements</ion-label>
-                  </ion-item>
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId +'/non-f-requirements']" lines="none" detail="false">              
-                    <ion-icon slot="start" name="checkbox-outline"></ion-icon>
-                    <ion-label>Non-Funcionals</ion-label>
-                  </ion-item>          
-              </ion-list>
-      
-              <!-- FILE MENU -->
-              <ion-list *ngIf="selectedMenu=='files'" id="inbox-list">
-                <ion-list-header>Files menu</ion-list-header>          
-                <ion-item routerDirection="root" [routerLink]="['/new/summary']" lines="none" detail="false">
-                  <ion-icon slot="start" name="folder-open-outline" style="visibility: hidden;"></ion-icon>
-                  <ion-label>New</ion-label>
-                </ion-item>            
-                  <ion-item routerDirection="root" [routerLink]="['/open']" lines="none" detail="false">
-                    <ion-icon slot="start" name="folder-open-outline"></ion-icon>
-                    <ion-label>Open</ion-label>
-                  </ion-item>            
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId + '/saveas']" lines="none" detail="false">
-                    <ion-icon slot="start"  name="save-outline"></ion-icon>
-                    <ion-label>Save as...</ion-label>
-                  </ion-item>
-                  <ion-item routerDirection="root" [routerLink]="['/' + project.projectId + '/print']" lines="none" detail="false">
-                    <ion-icon slot="start" name="print"></ion-icon>
-                    <ion-label>Print</ion-label>
-                  </ion-item>                                  
-              </ion-list>
-
+          <div class="sub-menu">
+            <div class="project-info ion-padding-start ion-padding-end">
+              <span *ngIf="project && project.name">{{project.name}}</span>
+              <span *ngIf="project && project.client"> - {{project.client}}</span>
             </div>
+        
+            <!-- REQ MENU -->
+            <ion-list *ngIf="selectedMenu=='req'" id="inbox-list">
+              <ion-list-header>
+                <span class="menu-header">User Requirements</span>                
+              </ion-list-header>          
+                <ion-item (click)="goToProject('summary')" [routerLink]="" lines="none" detail="false">
+                  <ion-icon slot="start" name="reader-outline"></ion-icon>
+                  <ion-label>Vision</ion-label>
+                </ion-item>
+                <ion-item (click)="goToProject('roles')" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start" name="people-circle"></ion-icon>
+                  <ion-label>Roles</ion-label>
+                </ion-item>
+                <ion-item (click)="goToProject('requirements')" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start" name="extension-puzzle-outline"></ion-icon>
+                  <ion-label>Requirements</ion-label>
+                </ion-item>
+                <ion-item (click)="goToProject('non-f-requirements')" [routerLink]=""  lines="none" detail="false">              
+                  <ion-icon slot="start" name="checkbox-outline"></ion-icon>
+                  <ion-label>Non-Funcionals</ion-label>
+                </ion-item>          
+            </ion-list>
+      
+            <!-- FILE MENU -->
+            <ion-list *ngIf="selectedMenu=='files'" id="inbox-list">
+              <ion-list-header>
+                <span class="menu-header">Files</span>                
+              </ion-list-header>          
+              <ion-item  (click)="goTo('new/summary')" [routerLink]=""  lines="none" detail="false">
+                <ion-icon slot="start" name="add-outline"></ion-icon>
+                <ion-label>New</ion-label>
+              </ion-item>            
+                <ion-item (click)="goTo('open')" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start" name="folder-open-outline"></ion-icon>
+                  <ion-label>Open</ion-label>
+                </ion-item>            
+                <ion-item (click)="goToProject('saveas')" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start"  name="save-outline"></ion-icon>
+                  <ion-label>Save as...</ion-label>
+                </ion-item>
+                <ion-item (click)="goToProject('print')" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start" name="print"></ion-icon>
+                  <ion-label>Print</ion-label>
+                </ion-item>                                                  
+            </ion-list>
+
+            <!-- PLAN MENU -->
+            <ion-list *ngIf="selectedMenu=='plan'" id="inbox-list">
+              <ion-list-header>
+                <span class="menu-header">Plan</span>                
+              </ion-list-header>          
+            </ion-list>
+
+            <!-- PLAN MENU -->
+            <ion-list *ngIf="selectedMenu=='proposal'" id="inbox-list">
+              <ion-list-header>
+                <span class="menu-header">Costs</span>                
+              </ion-list-header>          
+            </ion-list>
+
+            <!-- SETTINGS MENU -->
+            <ion-list *ngIf="selectedMenu=='settings'" id="inbox-list">
+              <ion-list-header>
+                <span class="menu-header">Settings</span>                
+              </ion-list-header>          
+              <ion-item  (click)="goToProject('company')" [routerLink]=""  lines="none" detail="false">
+                <ion-icon slot="start" name="business-outline"></ion-icon>
+                <ion-label>Your company</ion-label>
+              </ion-item>            
+            </ion-list>
 
           </div>
+          
                       
         </ion-content>
-      
-      
+
+        <ion-icon (click)="hideSubmenu()" class="hide-submenu-button" name="arrow-back-outline"></ion-icon>
+            
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>

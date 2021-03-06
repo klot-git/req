@@ -104,13 +104,16 @@ ion-item.selected {
 }
 
 .menu-selector {
+  position: absolute;
+  top: 0px; left: 0px; 
+  min-height: 100vh; height: auto;
   flex-direction: column;
   width: 60px;
   min-width: 0px;
   align-items: center;
   justify-content: start;
   border-right: 1px solid var(--ion-color-step-150, #d7d8da);
-
+  background-color: #FCFCFC;
 }
 .menu-selector ion-segment-button {
   min-width: 60px;
@@ -121,20 +124,50 @@ ion-item.selected {
 
 .project-info {
   color:gray;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.menus-container {
-  display: flex;
-  flex-direction: row;
-  height: calc(100%);
-}
-.menus {
-  display: flex;  
-  flex-direction: column;
+.sub-menu {
+  margin-left: 60px;
 }
 
-ion-menu ion-content {
-  --padding-top: 0px!important;
-  --padding-bottom: 0px!important;
-  --padding-start: 0px!important;
+ion-split-pane {
+  --side-min-width: 60px;
+  --side-max-width: 340px;  
+}
+ion-split-pane.half-open {
+  --side-width: 60px;
+}
+
+ion-menu {
+  transition: width 0.3s ease-in-out;
+}
+
+ion-list-header {  
+  --color: var(--ion-color-primary);
+  margin-bottom: 10px;
+}
+.menu-header {
+  font-weight: normal!important;
+  font-size: 18px;
+  color: gray;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+ion-segment-button {
+  border-top: solid 2px transparent!important;
+}
+
+ion-segment-button.segment-button-checked {
+  border-top: solid 2px var(--indicator-color)!important;
+}
+
+.hide-submenu-button {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  cursor: pointer;
 }

@@ -9,24 +9,20 @@
 
 <ion-content>
 
-  <div class="boxed-width ion-padding">
+  <div class="boxed-width ion-padding-start ion-padding-end">
 
     <ion-text>
       <h1>What would you like to print</h1>
     </ion-text>
 
     <div>
-      <ion-card button="true" class="tile1x">
-        <ion-card-header>
+      <ion-card class="tile1x with-hover">
+        <ion-card-header (click)="print()">
           <ion-card-subtitle>URS</ion-card-subtitle>
           <ion-card-title>URS - User Requirements Specifications</ion-card-title>
         </ion-card-header>        
       </ion-card>
     </div>
-  
-    <ion-button (click)="print()">    
-      <span>Print</span>
-    </ion-button>
   
     <ion-button (click)="export()" color="light">    
       <span>Download as HTML</span>

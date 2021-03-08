@@ -3,10 +3,10 @@ import { FormControl, FormGroup, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
 import { NonFRequirement } from '../non-f-requirement';
-import { NonFunctionalRequirementService } from '../services/nfreq.service';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 
 import { v4 as uuidv4} from 'uuid';
+import { ReqService } from '../services/req.service';
 
 @Component({
   selector: 'app-nonreq-list',
@@ -19,10 +19,10 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   constructor(
     router: ActivatedRoute,
-    projectService: ProjectService,
-    private reqService: NonFunctionalRequirementService) {
+    fileService: FileService,
+    private reqService: ReqService) {
 
-      super(router, projectService);
+      super(router, fileService);
       this.form = new FormGroup( { reqs: new FormArray([]) });
       this.loadRequirements();
   }
@@ -32,7 +32,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
 
   private async loadRequirements() {
     const reqsForms = this.form.get('reqs') as FormArray;
-    const requirements = await this.reqService.loadRequirements(this.projectId);
+    const requirements = await this.reqService.loadNonFRequirements(this.projectId);
     requirements.forEach(r => { reqsForms.push(this.createReqForm(r)); });
   }
 
@@ -41,7 +41,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
     const reqsForms = this.form.get('reqs') as FormArray;
     reqsForms.push(this.createReqForm(newReq));
 
-    this.reqService.updateRequirement(newReq);
+    this.reqService.updateNonFRequirement(newReq);
   }
 
   updateRequirement(reqForm: FormGroup) {
@@ -52,7 +52,7 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
       projectId: this.projectId
     } as NonFRequirement;
 
-    this.reqService.updateRequirement(req);
+    this.reqService.updateNonFRequirement(req);
   }
 
   async removeRequirement(reqForm: FormGroup) {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 
 @Component({
   selector: 'app-roles-list',
@@ -12,8 +12,8 @@ export class RolesListPage extends BaseProjectPage implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    projectService: ProjectService) {
-      super(route, projectService);
+    fileService: FileService) {
+      super(route, fileService);
   }
 
   ngOnInit() {

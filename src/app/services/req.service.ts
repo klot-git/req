@@ -4,7 +4,8 @@ import { Requirement, RequirementData } from '../requirement';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { ConnectionService } from './db.service';
-import { ProjectService } from './project.service';
+import { FileService } from './file.service';
+import { NonFRequirement } from '../non-f-requirement';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ReqService {
 
   constructor(
     private conn: ConnectionService,
-    private projectService: ProjectService) {}
+    private fileService: FileService) {}
 
   async createRequirement(req: Requirement) {
     req.reqId = await this.conn.db.requirements.put(req);
@@ -68,7 +69,7 @@ export class ReqService {
 
   async updateRequirementsOrder(reqId: string, parentId: string, from: number, to: number) {
 
-    const projectId = this.projectService.projectId;
+    const projectId = this.fileService.projectId;
 
     // updates reqs in between
     if (from < to) {  // if item was moved down
@@ -89,7 +90,7 @@ export class ReqService {
 
   async shiftRequirementsOrder(parentId: string, orderFrom: number, step: number) {
 
-    const projectId = this.projectService.projectId;
+    const projectId = this.fileService.projectId;
 
     await this.conn.db.requirements
       .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)
@@ -99,6 +100,20 @@ export class ReqService {
 
   async removeRequirement(reqId: string) {
     await this.conn.db.requirements.delete(reqId);
+  }
+
+  async updateNonFRequirement(req: NonFRequirement) {
+    await this.conn.db.nonfrequirements.put(req);
+  }
+
+  async loadNonFRequirements(projectId: string): Promise<NonFRequirement[]> {
+    return await this.conn.db.nonfrequirements
+      .orderBy('[reqCode+projectId]')
+      .filter(r => r.projectId === projectId).toArray();
+  }
+
+  async removeNonFRequirement(reqId: string) {
+    await this.conn.db.nonfrequirements.delete(reqId);
   }
 
 }

@@ -171,3 +171,13 @@ ion-segment-button.segment-button-checked {
   bottom: 16px;
   cursor: pointer;
 }
+
+.spinner {
+  position: fixed;
+  margin-left: 50%;
+  margin-top: 50%;
+}
+
+ion-backdrop {
+  opacity: 0.5;
+}

@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 import { MenuController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ConnectionService } from './services/db.service';
 import { MessageService } from './services/message.service';
-import { ProjectService } from './services/project.service';
+import { FileService } from './services/file.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Project } from './project';
 import { EventAggregatorService } from './services/event-aggregator.service';
+import { TemplateService } from './services/template.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,19 @@ export class AppComponent implements OnInit {
   selectedMenu = 'req';
   subMenuHidden = false;
 
+  @HostListener('window:keydown', ['$event']) keyEvent(event: KeyboardEvent) {
+    switch (event.code) {
+      case 'KeyS':
+      if (event.ctrlKey) {
+        this.save();
+        event.preventDefault();
+        event.returnValue = false;
+        return false;
+      }
+      break;
+    }
+  }
+
   constructor(
     private menu: MenuController,
     private router: Router,
@@ -27,9 +41,10 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private db: ConnectionService,
-    private projectService: ProjectService,
+    private fileService: FileService,
     public messageService: MessageService,
-    private events: EventAggregatorService
+    private events: EventAggregatorService,
+    private templateService: TemplateService
   ) {
     this.initializeApp();
     this.events.subscribe('CHANGE-MENU', m => { this.selectedMenu = m; });
@@ -51,7 +66,7 @@ export class AppComponent implements OnInit {
   }
 
   get project() {
-    let prj = this.projectService.project;
+    let prj = this.fileService.project;
     if  (!prj) {
       prj = {  name: '', client: '' } as Project;
     }
@@ -91,6 +106,10 @@ export class AppComponent implements OnInit {
 
   hideSubmenu() {
     this.subMenuHidden = true;
+  }
+
+  save() {
+    this.templateService.exportToJson(this.project.projectId);
   }
 
 

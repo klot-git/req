@@ -7,7 +7,7 @@ import { v4 as uuidv4} from 'uuid';
 
 import { Requirement } from '../requirement';
 import { MessageService } from '../services/message.service';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 import { ReqService } from '../services/req.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventAggregatorService } from '../services/event-aggregator.service';
@@ -31,8 +31,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
   isDraggingEpic = false;
 
-  @HostListener('window:keyup', ['$event']) keyEvent(event: KeyboardEvent) {
-    // console.log(event);
+  @HostListener('window:keydown', ['$event']) keyEvent(event: KeyboardEvent) {
     switch (event.key) {
       case 'Insert':
       this.insertNewRequirement();
@@ -45,17 +44,19 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
         this.showReqDetail(this.selectedReq);
       }
       break;
-      case 'ArrowRight':
+      case 'Tab':
       if (this.insertingReq) {
         return;
       }
-      this.toStory(this.selectedReq);
-      break;
-      case 'ArrowLeft':
-      if (this.insertingReq) {
-        return;
+      if (event.shiftKey) {
+        this.toEpic(this.selectedReq);
       }
-      this.toEpic(this.selectedReq);
+      else {
+        this.toStory(this.selectedReq);
+      }
+      event.preventDefault();
+      event.returnValue = false;
+      return false;
       break;
       case 'ArrowDown':
       this.moveSelectedReqDown();
@@ -68,14 +69,14 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    projectService: ProjectService,
+    fileService: FileService,
     events: EventAggregatorService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private reqService: ReqService) {
 
-    super(route, projectService);
+    super(route, fileService);
 
     this.form = new FormGroup({
       newRequirement: new FormControl('')
@@ -243,7 +244,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     const req = new Requirement();
     req.reqId = uuidv4();
     req.name = this.form.get('newRequirement').value;
-    req.projectId = this.projectService.projectId;
+    req.projectId = this.fileService.projectId;
 
     req.order = insertIdx + 1;
     req.parentId = !this.selectedReq ? '0' : this.selectedReq.parentId;

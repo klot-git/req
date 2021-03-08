@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProjectService } from './project.service';
+import { FileService } from './file.service';
 import { ReqService } from './req.service';
 import { MessageService } from './message.service';
 import { Requirement } from '../requirement';
@@ -20,7 +20,7 @@ export class TemplateService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    private projectService: ProjectService,
+    private fileService: FileService,
     private reqService: ReqService) {
   }
 
@@ -31,8 +31,10 @@ export class TemplateService {
 
   async exportToJson(projectId: string) {
 
+    this.messageService.blockUI();
+
     // read project
-    const project = await this.projectService.loadProject(projectId, true);
+    const project = await this.fileService.loadProject(projectId, true);
     const requirements = await this.reqService.loadRequirements(projectId, true);
 
     // create json object
@@ -43,8 +45,10 @@ export class TemplateService {
     zip.file('project-data.json', JSON.stringify(jsonObject));
     const blob = zip.generate({ type: 'blob' });
 
+    this.messageService.isLoadingData = false;
+
     // save it
-    const filename = project.client + '-' + project.name + '.zip';
+    const filename = project.name + '-' + project.projectId + '.zip';
     FileSaver.saveAs(blob, filename);
   }
 
@@ -63,7 +67,7 @@ export class TemplateService {
 
     this.messageService.blockUI();
 
-    const project = await this.projectService.loadProject(projectId, true);
+    const project = await this.fileService.loadProject(projectId, true);
     const reqs = await this.reqService.loadRequirements(projectId, true);
     const epics = this.reqService.groupRequirementsIntoEpics(reqs);
 
@@ -124,33 +128,5 @@ export class TemplateService {
       _exportedAt: new Date()
     };
   }
-
-  async importFromZip(file): Promise<string> {
-    this.messageService.blockUI();
-    this.messageService.isLoadingData = true;
-    let projectFile = null;
-
-    try {
-      const zip = new PizZip(file);
-      const json = zip.files['project-data.json'].asText();
-      projectFile = JSON.parse(json);
-    } catch {
-      this.messageService.addError('Invalid zip file or could not find project-data.json');
-      this.messageService.isLoadingData = false;
-      return null;
-    }
-
-    try {
-      await this.projectService.saveProject(projectFile);
-    } catch {
-      this.messageService.addError('Error saving file');
-      this.messageService.isLoadingData = false;
-      return null;
-    }
-
-    this.messageService.isLoadingData = false;
-    return projectFile.project.projectId;
-  }
-
 
 }

@@ -6,24 +6,34 @@ import { Requirement } from '../requirement';
 import { ConnectionService } from './db.service';
 import Dexie from 'dexie';
 import { EventAggregatorService } from './event-aggregator.service';
+import { MessageService } from './message.service';
+import PizZip from 'pizzip';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService {
+export class FileService {
 
   private projectHeader: Project;
 
   constructor(
+    private messageService: MessageService,
     private conn: ConnectionService,
     private events: EventAggregatorService,
     ) {
   }
 
+  /**
+   * Gets current project.
+   */
   public get project(): Project {
     return this.projectHeader;
   }
 
+  /**
+   * Gets current project Id.
+   * It looks at localstorage to get the last Id.
+   */
   public get projectId(): string {
 
     if (!this.projectHeader) {
@@ -103,7 +113,11 @@ export class ProjectService {
     );
   }
 
-  async saveProject(projectFile: any) {
+  /**
+   * Saves the projec at the local DB.
+   * @param projectFile a JSON structure with all projects records
+   */
+  private async saveProject(projectFile: any) {
 
     await this.removeProject(projectFile.project.projectId);
 
@@ -112,10 +126,47 @@ export class ProjectService {
     await this.conn.db.nonfrequirements.bulkAdd(projectFile.requirements);
   }
 
+  /**
+   * Removes the project from local DB.
+   * @param projectId The project Id
+   */
   async removeProject(projectId: string) {
     await this.conn.db.projects.delete(projectId);
     await this.conn.db.requirements.where('projectId').equals(projectId).delete();
     await this.conn.db.nonfrequirements.where('projectId').equals(projectId).delete();
   }
+
+  /**
+   * Imports a project zipfile to the local DB.
+   * @param file Zipfile content
+   * @returns the importanted project Id
+   */
+  async importFromZip(file): Promise<string> {
+    this.messageService.blockUI();
+    this.messageService.isLoadingData = true;
+    let projectFile = null;
+
+    try {
+      const zip = new PizZip(file);
+      const json = zip.files['project-data.json'].asText();
+      projectFile = JSON.parse(json);
+    } catch {
+      this.messageService.addError('Invalid zip file or could not find project-data.json');
+      this.messageService.isLoadingData = false;
+      return null;
+    }
+
+    try {
+      await this.saveProject(projectFile);
+    } catch {
+      this.messageService.addError('Error saving file');
+      this.messageService.isLoadingData = false;
+      return null;
+    }
+
+    this.messageService.isLoadingData = false;
+    return projectFile.project.projectId;
+  }
+
 
 }

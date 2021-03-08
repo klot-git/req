@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 
 @Component({
   selector: 'app-prj-summary',
@@ -16,13 +16,13 @@ export class PrjSummaryPage extends BaseProjectPage implements OnInit {
   project: Project;
   form: FormGroup;
 
-  constructor(route: ActivatedRoute, projectService: ProjectService) {
+  constructor(route: ActivatedRoute, fileService: FileService) {
 
-    super(route, projectService);
+    super(route, fileService);
 
     this.project = new Project();
 
-    this.projectService.loadProjectAsCurrent(this.projectId).then(p => {
+    this.fileService.loadProjectAsCurrent(this.projectId).then(p => {
       this.project = p;
       this.bindToScreen();
     });
@@ -54,7 +54,7 @@ export class PrjSummaryPage extends BaseProjectPage implements OnInit {
 
   ionViewWillLeave() {
     this.bindToObject();
-    this.projectService.updateProject(this.project);
+    this.fileService.updateProject(this.project);
   }
 
 }

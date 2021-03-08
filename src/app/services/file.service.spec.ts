@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NfreqService } from './nfreq.service';
+import { FileService } from './file.service';
 
-describe('NfreqService', () => {
-  let service: NfreqService;
+describe('FileService', () => {
+  let service: FileService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(NfreqService);
+    service = TestBed.inject(FileService);
   });
 
   it('should be created', () => {

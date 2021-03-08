@@ -4,7 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { BaseProjectPage } from '../base-project.page';
 import { Project } from '../project';
 import { EventAggregatorService } from '../services/event-aggregator.service';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 import { TemplateService } from '../services/template.service';
 
 @Component({
@@ -18,13 +18,13 @@ export class OpenPage extends BaseProjectPage implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    projectService: ProjectService,
+    fileService: FileService,
     private events: EventAggregatorService,
     private router: Router,
     private alertController: AlertController,
     private templateService: TemplateService) {
 
-    super(route, projectService);
+    super(route, fileService);
   }
 
   ionViewDidEnter() {
@@ -35,20 +35,20 @@ export class OpenPage extends BaseProjectPage implements OnInit {
   }
 
   async loadProjects() {
-    this.projects = await this.projectService.loadProjects(5);
+    this.projects = await this.fileService.loadProjects(5);
   }
 
   openProject(projectId: string) {
-    this.projectService.changeCurrentProject(projectId);
+    this.fileService.changeCurrentProject(projectId);
     this.navigateToNewProject(projectId);
   }
 
   importProject(fileChangeEvent){
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const projectId = await this.templateService.importFromZip(e.target.result);
+      const projectId = await this.fileService.importFromZip(e.target.result);
       if (projectId) {
-        this.projectService.changeCurrentProject(projectId);
+        this.fileService.changeCurrentProject(projectId);
         this.navigateToNewProject(projectId);
       }
     };
@@ -66,7 +66,7 @@ export class OpenPage extends BaseProjectPage implements OnInit {
       return;
     }
 
-    await this.projectService.removeProject(prj.projectId);
+    await this.fileService.removeProject(prj.projectId);
     const idx = this.projects.indexOf(prj);
     this.projects.splice(idx, 1);
   }

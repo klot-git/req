@@ -1,7 +1,7 @@
 <ion-app>
 
   <!-- Block UI -->
-  <ion-backdrop *ngIf="messageService.isUIBlocked" visible="true"></ion-backdrop>
+  <ion-backdrop *ngIf="messageService.isUIBlocked" tappable="false" visible="true"></ion-backdrop>
 
   <ion-split-pane contentId="main-content" [class.half-open]="subMenuHidden">
           
@@ -68,10 +68,14 @@
                 <ion-item (click)="goTo('open')" [routerLink]=""  lines="none" detail="false">
                   <ion-icon slot="start" name="folder-open-outline"></ion-icon>
                   <ion-label>Open</ion-label>
+                </ion-item>
+                <ion-item (click)="save()" [routerLink]=""  lines="none" detail="false">
+                  <ion-icon slot="start"  name="save-outline"></ion-icon>
+                  <ion-label>Save (Ctrl+S)</ion-label>
                 </ion-item>            
                 <ion-item (click)="goToProject('saveas')" [routerLink]=""  lines="none" detail="false">
                   <ion-icon slot="start"  name="save-outline"></ion-icon>
-                  <ion-label>Save as...</ion-label>
+                  <ion-label>Save as...  (Ctrl+Shift+S)</ion-label>
                 </ion-item>
                 <ion-item (click)="goToProject('print')" [routerLink]=""  lines="none" detail="false">
                   <ion-icon slot="start" name="print"></ion-icon>
@@ -113,11 +117,13 @@
             
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
+      
   </ion-split-pane>
 
   <!-- LOADING SPIN -->
   <div *ngIf="messageService.isLoadingData" class="spinner">
-    <ion-spinner name="crescent"></ion-spinner>
+    <ion-spinner color="primary" name="crescent"></ion-spinner>
   </div>
+  
 
 </ion-app>

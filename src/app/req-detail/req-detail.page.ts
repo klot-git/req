@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Requirement, RequirementData } from '../requirement';
 import { EventAggregatorService } from '../services/event-aggregator.service';
 import { ReqService } from '../services/req.service';
-import { ProjectService } from '../services/project.service';
+import { FileService } from '../services/file.service';
 import { BaseProjectPage } from '../base-project.page';
 
 @Component({
@@ -34,12 +34,12 @@ export class ReqDetailPage extends BaseProjectPage implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    projectService: ProjectService,
+    fileService: FileService,
     private location: Location,
     private events: EventAggregatorService,
     private reqService: ReqService) {
 
-    super(route, projectService);
+    super(route, fileService);
 
     this.req = { reqId: this.route.snapshot.paramMap.get('reqId'), data: new RequirementData() } as Requirement;
 

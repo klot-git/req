@@ -43,8 +43,7 @@ export class AppComponent implements OnInit {
     private db: ConnectionService,
     private fileService: FileService,
     public messageService: MessageService,
-    private events: EventAggregatorService,
-    private templateService: TemplateService
+    private events: EventAggregatorService
   ) {
     this.initializeApp();
     this.events.subscribe('CHANGE-MENU', m => { this.selectedMenu = m; });
@@ -109,7 +108,7 @@ export class AppComponent implements OnInit {
   }
 
   save() {
-    this.templateService.exportToJson(this.project.projectId);
+    this.fileService.exportToZip(this.project.projectId);
   }
 
 

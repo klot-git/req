@@ -18,7 +18,7 @@
     <ion-card class="with-hover" *ngFor="let prj of projects">
       <ion-card-header (click)="openProject(prj.projectId)">
         <ion-card-subtitle>
-          {{prj.name}} - {{prj.client}}          
+          {{prj.name}} - {{prj.client}} ({{prj.projectId}})          
         </ion-card-subtitle>              
       </ion-card-header>
       <ion-icon *ngIf="this.projectId!==prj.projectId" (click)="confirmRemove(prj, $event)" class="remove-icon" name="trash-outline"></ion-icon>

@@ -4,10 +4,11 @@ import FileSaver from 'file-saver';
 import { Project } from '../project';
 import { Requirement } from '../requirement';
 import { ConnectionService } from './db.service';
-import Dexie from 'dexie';
 import { EventAggregatorService } from './event-aggregator.service';
 import { MessageService } from './message.service';
 import PizZip from 'pizzip';
+import { NonFRequirement } from '../non-f-requirement';
+import { ReqService } from './req.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class FileService {
 
   constructor(
     private messageService: MessageService,
+    private reqService: ReqService,
     private conn: ConnectionService,
     private events: EventAggregatorService,
     ) {
@@ -117,13 +119,13 @@ export class FileService {
    * Saves the projec at the local DB.
    * @param projectFile a JSON structure with all projects records
    */
-  private async saveProject(projectFile: any) {
+  public async saveProject(projectFile: any) {
 
     await this.removeProject(projectFile.project.projectId);
 
     await this.conn.db.projects.add(projectFile.project);
     await this.conn.db.requirements.bulkAdd(projectFile.requirements);
-    await this.conn.db.nonfrequirements.bulkAdd(projectFile.requirements);
+    await this.conn.db.nonfrequirements.bulkAdd(projectFile.nonfrequirements);
   }
 
   /**
@@ -134,6 +136,18 @@ export class FileService {
     await this.conn.db.projects.delete(projectId);
     await this.conn.db.requirements.where('projectId').equals(projectId).delete();
     await this.conn.db.nonfrequirements.where('projectId').equals(projectId).delete();
+  }
+
+  /**
+   * Change the project Id form a project file.
+   * Used to SAVE AS or MODELS.
+   * @param projectFile the projectfile
+   * @param newId the new id
+   */
+  private changeProjectId(projectFile: any, newId: string) {
+    projectFile.project.projectId = newId;
+    projectFile.requirements.forEach(o => { o.projectId = newId; });
+    projectFile.nonfrequirements.forEach(o => { o.projectId = newId; });
   }
 
   /**
@@ -166,6 +180,53 @@ export class FileService {
 
     this.messageService.isLoadingData = false;
     return projectFile.project.projectId;
+  }
+
+  async exportToZip(projectId: string, withNewId: string = null): Promise<any> {
+
+    this.messageService.blockUI();
+
+    // read project
+    const project = await this.loadProject(projectId, true);
+    const requirements = await this.reqService.loadRequirements(projectId, true);
+    const nonfrequirements = await this.reqService.loadNonFRequirements(projectId);
+
+    // create json object
+    const jsonFile = this.convertToJSONFile(project, requirements, nonfrequirements);
+
+    if (withNewId) {
+      this.changeProjectId(jsonFile, withNewId);
+    }
+
+    // zip it
+    const zip = new PizZip();
+    zip.file('project-data.json', JSON.stringify(jsonFile));
+    const blob = zip.generate({ type: 'blob' });
+
+    this.messageService.isLoadingData = false;
+
+    // save it
+    const filename = project.name + ' (' + jsonFile.project.projectId + ').zip';
+    FileSaver.saveAs(blob, filename);
+
+    return jsonFile;
+  }
+
+
+  /**
+   * Creates a project JSON file.
+   * @param project the project
+   * @param requirements the requirements
+   * @param nonfrequirements the non functaion requirements
+   * @returns the JSON file with all content
+   */
+  convertToJSONFile(project: Project, requirements: Requirement[], nonfrequirements: NonFRequirement[]): any {
+    return {
+      project,
+      requirements,
+      nonfrequirements,
+      _exportedAt: new Date()
+    };
   }
 
 

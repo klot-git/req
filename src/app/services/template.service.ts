@@ -29,16 +29,17 @@ export class TemplateService {
     FileSaver.saveAs(blob, 'teste.html');
   }
 
-  async exportToJson(projectId: string) {
+  async exportToJson(projectId: string, withNewId: string = null) {
 
     this.messageService.blockUI();
 
     // read project
     const project = await this.fileService.loadProject(projectId, true);
     const requirements = await this.reqService.loadRequirements(projectId, true);
+    const nonfrequirements = await this.reqService.loadNonFRequirements(projectId);
 
     // create json object
-    const jsonObject = this.createProjectJsonObject(project, requirements);
+    const jsonObject = this.fileService.convertToJSONFile(project, requirements, nonfrequirements);
 
     // zip it
     const zip = new PizZip();
@@ -48,7 +49,7 @@ export class TemplateService {
     this.messageService.isLoadingData = false;
 
     // save it
-    const filename = project.name + '-' + project.projectId + '.zip';
+    const filename = project.name + '-' + project.projectId + '.req';
     FileSaver.saveAs(blob, filename);
   }
 
@@ -121,12 +122,5 @@ export class TemplateService {
     return `<div class="wbs">${html}</div>`;
   }
 
-  createProjectJsonObject(project: Project, requirements: Requirement[]): any {
-    return {
-      project,
-      requirements,
-      _exportedAt: new Date()
-    };
-  }
 
 }

@@ -12,9 +12,7 @@ import { NonFRequirement } from '../non-f-requirement';
 })
 export class ReqService {
 
-  constructor(
-    private conn: ConnectionService,
-    private fileService: FileService) {}
+  constructor(private conn: ConnectionService) {}
 
   async createRequirement(req: Requirement) {
     req.reqId = await this.conn.db.requirements.put(req);
@@ -67,9 +65,7 @@ export class ReqService {
   }
 
 
-  async updateRequirementsOrder(reqId: string, parentId: string, from: number, to: number) {
-
-    const projectId = this.fileService.projectId;
+  async updateRequirementsOrder(projectId: string, reqId: string, parentId: string, from: number, to: number) {
 
     // updates reqs in between
     if (from < to) {  // if item was moved down
@@ -88,9 +84,7 @@ export class ReqService {
     await this.conn.db.requirements.put(req);
   }
 
-  async shiftRequirementsOrder(parentId: string, orderFrom: number, step: number) {
-
-    const projectId = this.fileService.projectId;
+  async shiftRequirementsOrder(projectId: string, parentId: string, orderFrom: number, step: number) {
 
     await this.conn.db.requirements
       .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)

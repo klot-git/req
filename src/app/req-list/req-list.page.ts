@@ -261,7 +261,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
     this.form.get('newRequirement').setValue('');
 
-    this.reqService.shiftRequirementsOrder(req.parentId, insertIdx, 1);
+    this.reqService.shiftRequirementsOrder(this.projectId, req.parentId, insertIdx, 1);
     this.reqService.createRequirement(req);
 
     if (this.selectedReq) {
@@ -301,7 +301,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     collection.splice(idx, 1);
 
     this.reqService.removeRequirement(req.reqId);
-    this.reqService.shiftRequirementsOrder(req.parentId, req.order, -1);
+    this.reqService.shiftRequirementsOrder(this.projectId, req.parentId, req.order, -1);
 
     // move seleted requirement
     if (this.selectedReq) {
@@ -362,7 +362,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
 
     // update epics order at db
-    this.reqService.shiftRequirementsOrder('0', oldOrder, -1);
+    this.reqService.shiftRequirementsOrder(this.projectId, '0', oldOrder, -1);
 
     console.log(this.epics);
 
@@ -399,10 +399,10 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     this.epics.splice(parentIdx + 1, 0, req);
 
     // update childs orders at db
-    this.reqService.shiftRequirementsOrder(parent.reqId, oldOrder, -1);
+    this.reqService.shiftRequirementsOrder(this.projectId, parent.reqId, oldOrder, -1);
 
     // update epic orders at db
-    this.reqService.shiftRequirementsOrder('0', req.order, 1);
+    this.reqService.shiftRequirementsOrder(this.projectId, '0', req.order, 1);
 
     // update req parentId at db
     this.reqService.updateRequirementParentId(req.reqId, req.parentId, req.order, req.color);
@@ -434,7 +434,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     console.log(reqs);
 
     try {
-      await this.reqService.updateRequirementsOrder(req.reqId, req.parentId, event.previousIndex, event.currentIndex);
+      await this.reqService.updateRequirementsOrder(this.projectId, req.reqId, req.parentId, event.previousIndex, event.currentIndex);
     } catch (err) {
       this.messageService.addError('Sorry, could not reorder items');
       console.log(err);

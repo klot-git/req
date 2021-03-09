@@ -30,14 +30,14 @@ class DB extends Dexie {
 
   projects: Dexie.Table<Project, string>;
   requirements: Dexie.Table<Requirement, string>;
-  nonfrequirements: Dexie.Table<NonFRequirement, string>;
+  nonfrequirements: Dexie.Table<NonFRequirement, [string, number]>;
 
   constructor(databaseName) {
       super(databaseName);
       this.version(1).stores({
           projects: 'projectId',
           requirements: 'reqId,[projectId+parentId+order],projectId',
-          nonfrequirements: 'reqId,[reqCode+projectId], projectId',
+          nonfrequirements: '[projectId+reqId],[projectId+reqCode],projectId',
       });
       this.projects = this.table('projects');
       this.requirements = this.table('requirements');

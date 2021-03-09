@@ -64,7 +64,6 @@ export class ReqService {
     return await this.conn.db.requirements.update(reqId, { parentId, order, color });
   }
 
-
   async updateRequirementsOrder(projectId: string, reqId: string, parentId: string, from: number, to: number) {
 
     // updates reqs in between
@@ -97,17 +96,30 @@ export class ReqService {
   }
 
   async updateNonFRequirement(req: NonFRequirement) {
+    if (!req.reqId) {
+      req.reqId = await this.getNextNonFRequirementId(req.projectId);
+    }
     await this.conn.db.nonfrequirements.put(req);
   }
 
   async loadNonFRequirements(projectId: string): Promise<NonFRequirement[]> {
     return await this.conn.db.nonfrequirements
-      .orderBy('[reqCode+projectId]')
+      .orderBy('[projectId+reqCode]')
       .filter(r => r.projectId === projectId).toArray();
   }
 
-  async removeNonFRequirement(reqId: string) {
-    await this.conn.db.nonfrequirements.delete(reqId);
+  async removeNonFRequirement(projectId: string, reqId: number) {
+    await this.conn.db.nonfrequirements.delete([projectId, reqId]);
+  }
+
+  async getNextNonFRequirementId(projectId: string) {
+    const last = await this.conn.db.nonfrequirements
+      .orderBy('[projectId+reqId]').reverse().limit(1)
+      .filter(r => r.projectId === projectId).toArray();
+    if (!last || last.length === 0) {
+      return 1;
+    }
+    return last[0].reqId + 1;
   }
 
 }

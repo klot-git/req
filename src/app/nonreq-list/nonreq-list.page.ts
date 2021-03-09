@@ -36,29 +36,30 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
     requirements.forEach(r => { reqsForms.push(this.createReqForm(r)); });
   }
 
-  addRequirement() {
-    const newReq = { reqId: uuidv4(), reqCode: this.getNextCode(), description: '', projectId: this.projectId } as NonFRequirement;
+  async addRequirement() {
+    const newReq = { reqCode: this.getNextCode(), description: '', projectId: this.projectId } as NonFRequirement;
+    await this.reqService.updateNonFRequirement(newReq);
     const reqsForms = this.form.get('reqs') as FormArray;
     reqsForms.push(this.createReqForm(newReq));
-
-    this.reqService.updateNonFRequirement(newReq);
   }
 
   updateRequirement(reqForm: FormGroup) {
+    if (reqForm.get('deleted').value) {
+      return;
+    }
     const req = {
       reqId: reqForm.get('reqId').value,
       reqCode: reqForm.get('reqCode').value,
       description: reqForm.get('description').value,
       projectId: this.projectId
     } as NonFRequirement;
-
     this.reqService.updateNonFRequirement(req);
   }
 
   async removeRequirement(reqForm: FormGroup) {
     const reqId = reqForm.get('reqId').value;
-    await this.reqService.removeRequirement(reqId);
-
+    await this.reqService.removeNonFRequirement(this.projectId, reqId);
+    reqForm.get('deleted').setValue(true);
     const reqsForms = this.form.get('reqs') as FormArray;
     const formIdx = reqsForms.controls.indexOf(reqForm);
     reqsForms.removeAt(formIdx);
@@ -68,7 +69,8 @@ export class NonreqListPage extends BaseProjectPage implements OnInit {
     return new FormGroup({
       reqId: new FormControl(req.reqId),
       reqCode: new FormControl(req.reqCode),
-      description: new FormControl(req.description)
+      description: new FormControl(req.description),
+      deleted: new FormControl(false)
     });
   }
 

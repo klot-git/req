@@ -1,14 +1,14 @@
 export class Requirement {
 
-    public reqId: string;
+    public reqId: number;
+    public projectId: string;
+
     public name: string;
     public reqCode: string;
     public order: number;
     public color: string;
 
-    public parentId: string;
-
-    public projectId: string;
+    public parentId: number;
 
     public data: RequirementData;
 

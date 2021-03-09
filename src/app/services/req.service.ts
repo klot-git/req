@@ -15,7 +15,8 @@ export class ReqService {
   constructor(private conn: ConnectionService) {}
 
   async createRequirement(req: Requirement) {
-    req.reqId = await this.conn.db.requirements.put(req);
+    req.reqId = await this.getNextRequirementId(req.projectId);
+    await this.conn.db.requirements.put(req);
   }
 
   async loadRequirements(projectId: string, includeData = false): Promise<Requirement[]> {
@@ -39,7 +40,7 @@ export class ReqService {
     const grouped: Requirement[] = [];
 
     requirements.forEach(r => {
-      if (r.parentId === '0') {
+      if (r.parentId === 0) {
         grouped.push(r);
       } else {
         const parent = grouped.find(r2 => r2.reqId === r.parentId);
@@ -52,19 +53,20 @@ export class ReqService {
     return grouped;
   }
 
-  async loadRequirement(reqId: string): Promise<Requirement> {
-    return await this.conn.db.requirements.get(reqId);
+  async loadRequirement(projectId: string, reqId: number): Promise<Requirement> {
+    return await this.conn.db.requirements.get([projectId, reqId]);
   }
 
   async updateRequirement(req: Requirement) {
     return await this.conn.db.requirements.put(req);
   }
 
-  async updateRequirementParentId(reqId: string, parentId: string, order: number, color: string) {
-    return await this.conn.db.requirements.update(reqId, { parentId, order, color });
+  async updateRequirementParentId(projectId: string, reqId: number, parentId: number, order: number, color: string) {
+    console.log(projectId);
+    return await this.conn.db.requirements.update([projectId, reqId], { parentId, order, color });
   }
 
-  async updateRequirementsOrder(projectId: string, reqId: string, parentId: string, from: number, to: number) {
+  async updateRequirementsOrder(projectId: string, reqId: number, parentId: number, from: number, to: number) {
 
     // updates reqs in between
     if (from < to) {  // if item was moved down
@@ -78,12 +80,12 @@ export class ReqService {
     }
 
     // update moved req
-    const req = await this.conn.db.requirements.get(reqId);
+    const req = await this.conn.db.requirements.get([projectId, reqId]);
     req.order = to;
     await this.conn.db.requirements.put(req);
   }
 
-  async shiftRequirementsOrder(projectId: string, parentId: string, orderFrom: number, step: number) {
+  async shiftRequirementsOrder(projectId: string, parentId: number, orderFrom: number, step: number) {
 
     await this.conn.db.requirements
       .filter(r => r.projectId === projectId && r.parentId === parentId && r.order >= orderFrom)
@@ -91,8 +93,8 @@ export class ReqService {
 
   }
 
-  async removeRequirement(reqId: string) {
-    await this.conn.db.requirements.delete(reqId);
+  async removeRequirement(projectId: string, reqId: number) {
+    await this.conn.db.requirements.delete([projectId, reqId]);
   }
 
   async updateNonFRequirement(req: NonFRequirement) {
@@ -112,8 +114,18 @@ export class ReqService {
     await this.conn.db.nonfrequirements.delete([projectId, reqId]);
   }
 
-  async getNextNonFRequirementId(projectId: string) {
+  private async getNextNonFRequirementId(projectId: string): Promise<number> {
     const last = await this.conn.db.nonfrequirements
+      .orderBy('[projectId+reqId]').reverse().limit(1)
+      .filter(r => r.projectId === projectId).toArray();
+    if (!last || last.length === 0) {
+      return 1;
+    }
+    return last[0].reqId + 1;
+  }
+
+  private async getNextRequirementId(projectId: string): Promise<number> {
+    const last = await this.conn.db.requirements
       .orderBy('[projectId+reqId]').reverse().limit(1)
       .filter(r => r.projectId === projectId).toArray();
     if (!last || last.length === 0) {

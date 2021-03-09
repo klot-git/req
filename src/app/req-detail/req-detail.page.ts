@@ -41,7 +41,10 @@ export class ReqDetailPage extends BaseProjectPage implements OnInit {
 
     super(route, fileService);
 
-    this.req = { reqId: this.route.snapshot.paramMap.get('reqId'), data: new RequirementData() } as Requirement;
+    this.req = {
+      reqId: parseInt(this.route.snapshot.paramMap.get('reqId'), 10),
+      data: new RequirementData()
+    } as Requirement;
 
     this.form = new FormGroup({
       name: new FormControl(''),
@@ -67,7 +70,7 @@ export class ReqDetailPage extends BaseProjectPage implements OnInit {
   }
 
   async load() {
-    this.req = await this.reqService.loadRequirement(this.req.reqId);
+    this.req = await this.reqService.loadRequirement(this.projectId, this.req.reqId);
     if (!this.req.data) {
       this.req.data = new RequirementData();
     }

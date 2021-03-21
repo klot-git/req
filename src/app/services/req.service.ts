@@ -62,9 +62,13 @@ export class ReqService {
   }
 
   async updateRequirementParentId(projectId: string, reqId: number, parentId: number, order: number, color: string) {
-    console.log(projectId);
     return await this.conn.db.requirements.update([projectId, reqId], { parentId, order, color });
   }
+
+  async updateRequirementName(projectId: string, reqId: number,  name: string) {
+    await this.conn.db.requirements.update([projectId, reqId], { name });
+  }
+
 
   async updateRequirementsOrder(projectId: string, reqId: number, parentId: number, from: number, to: number) {
 

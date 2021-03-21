@@ -10,6 +10,8 @@
     margin-left: 25px;
     margin-top: 20px;
     font-weight: bold;
+    width: 100%;
+    max-width: none;
 }
 
 .req-label.story {
@@ -20,7 +22,7 @@
   
 ion-item.req-item {        
     background: white;    
-    // --padding-start: 0;
+    --padding-start: 0;
 }
   
 .cdk-drag-preview {
@@ -49,6 +51,10 @@ box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
 
 .req-item.selected {
     --background: rgba(var(--ion-color-primary-rgb), 0.14);    
+}
+
+.new-req {
+    --padding-start: 0;
 }
 
 .new-req ion-input {
@@ -108,4 +114,24 @@ ion-item.selected {
 .epic {
     border-radius: 0px;
     padding-left: 0px;
+}
+
+.edit-input {
+    width: 100%;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-start: 0px;
+    --padding-end: 0px;
+    min-height: none;
+    max-width: none;
+}
+
+.epic-color {
+    height: 100%;
+    width: 10px;
+    cursor: pointer;
+}
+
+.epic-color:hover {
+    opacity: 0.7;
 }

@@ -31,7 +31,8 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
   isDraggingEpic = false;
 
-  @HostListener('window:keydown', ['$event']) keyEvent(event: KeyboardEvent) {
+  @HostListener('window:keydown', ['$event']) async keyEvent(event: KeyboardEvent) {
+
     switch (event.key) {
       case 'Insert':
       this.insertNewRequirement();
@@ -40,14 +41,14 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
       this.removeRequirement();
       break;
       case 'Enter':
+      if (this.insertingReq) {
+        return;
+      }
       if (this.selectedReq) {
         this.showReqDetail(this.selectedReq);
       }
       break;
       case 'Tab':
-      if (this.insertingReq) {
-        return;
-      }
       if (event.shiftKey) {
         this.toEpic(this.selectedReq);
       }
@@ -79,7 +80,8 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     super(route, fileService);
 
     this.form = new FormGroup({
-      newRequirement: new FormControl('')
+      newRequirement: new FormControl(''),
+      editRequirement: new FormControl('')
     });
     events.subscribe('REQ-CHANGED', req => {
       const myReq = this.findRequirement(req.reqId);
@@ -102,6 +104,9 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
   }
 
   insertNewRequirement() {
+    if (this.insertingReq) {
+      return;
+    }
     this.insertingReq = true;
     setTimeout(() => {
       if (this.selectedReq === null) {
@@ -117,13 +122,48 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     this.form.get('newRequirement').setValue('');
   }
 
-  selectReq(req: Requirement) {
+  async selectReq(req: Requirement) {
+
     if (this.selectedReq === req) {
-      this.selectedReq = null;
+      // console.log('unset');
+      // this.selectedReq = null;
+      // this.form.get('editRequirement').setValue('');
     } else {
       this.selectedReq = req;
+      this.form.get('editRequirement').setValue(req.name);
+      setTimeout(() => {
+        const f = window.document.getElementById('edit-field-' + req.reqId) as any;
+        if (f) { f.setFocus(); }
+      }, 100);
     }
     this.insertingReq = false;
+
+  }
+
+  async isEditing() {
+    if (!this.selectedReq) {
+      return false;
+    }
+    const f = window.document.getElementById('edit-field-' + this.selectedReq.reqId) as any;
+    if (!f) {
+      return false;
+    }
+    const fn = await f.getInputElement();
+    return document.activeElement === fn;
+  }
+
+  updateRequirementName(req: Requirement, event) {
+    req.name = event.srcElement.value;
+    this.reqService.updateRequirementName(this.projectId, req.reqId, req.name);
+  }
+
+  colorClick(req: Requirement, event) {
+    this.selectedReq = req;
+    const f = window.document.getElementById('edit-field-' + req.reqId) as any;
+    if (f) {
+      f.setBlur();
+    }
+    event.cancelBubble = true;
   }
 
   /**
@@ -273,7 +313,11 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     return false;
   }
 
-  removeRequirement(req: Requirement = null) {
+  async removeRequirement(req: Requirement = null) {
+
+    if (await this.isEditing() || this.insertingReq) {
+      return;
+    }
 
     if (!req) {
       req = this.selectedReq;
@@ -300,7 +344,7 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
     const idx = collection.indexOf(req);
     collection.splice(idx, 1);
 
-    this.reqService.removeRequirement(req.projectId, req.reqId);
+    this.reqService.removeRequirement(this.projectId, req.reqId);
     this.reqService.shiftRequirementsOrder(this.projectId, req.parentId, req.order, -1);
 
     // move seleted requirement
@@ -329,6 +373,10 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
   }
 
   toStory(req: Requirement) {
+
+    if (this.insertingReq) {
+      return;
+    }
 
     // can not convert to story an epic with childs
     if (req.childs && req.childs.length > 0) {
@@ -371,6 +419,10 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
    * @param req The storyto be converted to epic
    */
   toEpic(req: Requirement) {
+
+    if (this.insertingReq) {
+      return;
+    }
 
     // finds the parent
     const parent = this.epics.find(r => r.reqId === req.parentId);
@@ -447,6 +499,9 @@ export class ReqListPage extends BaseProjectPage implements OnInit {
 
   private findPreviousParent(req: Requirement): Requirement {
     const previousReq = this.findPreviousRequirement(req);
+    if (!previousReq) {
+      return null;
+    }
     if (previousReq.parentId === 0) {
       return previousReq;
     } else {
